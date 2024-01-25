@@ -23,11 +23,11 @@ private const val TAG = "VoskHub"
 class VoskHub (
     private val context: Context
 ) : RecognitionListener {
-    // ViewModel Ressources
+    // ViewModel resources
     private var viewModel: VLTViewModel? = null
     private var onAction:((VLTAction) -> Unit)? = null
 
-    // RecognitionListener Ressources
+    // RecognitionListener resources
     private var speechService: SpeechService? = null
     private var modelPath: String? = null
     private var model: Model? = null
@@ -58,9 +58,9 @@ class VoskHub (
     }
 
     fun initModel(): Boolean {
-        if(this.model != null)
+        if (this.model != null)
             return true
-        if (isModelAvailable()) {
+        if (this.modelPath != null && isModelAvailable()) {
             updateApplicationState(VLTAction.ShowDownloadConfirmation(false))
             val currentLanguage = modelPath ?: Languages.ENGLISH_US.modelPath
             getModel(currentLanguage,
@@ -103,7 +103,7 @@ class VoskHub (
 
     // Transcription methods
     fun toggleRecording() {
-        //Dont act if VoskHub is not properly initialized
+        // Don't act if VoskHub is not properly initialized
         if (this.viewModel == null || !this.viewModel!!.state.modelLoaded)
             return
 

@@ -1,5 +1,6 @@
 package tech.almost_senseless.voskle
 
+import androidx.compose.foundation.ScrollState
 import tech.almost_senseless.voskle.vosklib.VoskHub
 
 data class VLTState(

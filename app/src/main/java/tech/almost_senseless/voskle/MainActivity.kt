@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,26 +74,37 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            VoskleLiveTranscribeTheme (darkTheme = isSystemInDarkTheme(), dynamicColor = true) {
-                viewModel = viewModel<VLTViewModel>(
+            VoskleLiveTranscribeTheme(darkTheme = isSystemInDarkTheme(), dynamicColor = true) {
+                viewModel = viewModel(
                     factory = VLTViewModelFactory(
                         UserPreferencesRepository(
-                        applicationContext.dataStore
-                    ), applicationContext
+                            applicationContext.dataStore
+                        ), applicationContext
                     )
                 )
                 val state = viewModel.state
                 val settings = viewModel.settings.collectAsState(initial = UserPreferences())
 
-
-                viewModel.getVoskHub().setModelPath(settings.value.language.modelPath)
+                LaunchedEffect(
+                    viewModel.getVoskHub().isModelAvailable(),
+                    state.modelLoaded,
+                    settings.value.language.modelPath,
+                    checkSelfPermission(android.Manifest.permission.RECORD_AUDIO)
+                ) {
+                    viewModel.getVoskHub().setModelPath(settings.value.language.modelPath)
+                    if (viewModel.getVoskHub().isModelAvailable()
+                        && !state.modelLoaded
+                        && checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        viewModel.getVoskHub().initModel()
+                    }
+                }
 
                 val requestPermissionLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.RequestPermission(),
                     onResult = { isGranted ->
                         if (isGranted) {
                             if (viewModel.getVoskHub().isModelAvailable()) {
-                                //viewModel.onAction(VLTAction.SetRecordingStatus(true))
                                 viewModel.getVoskHub().toggleRecording()
                             } else {
                                 viewModel.getVoskHub().initModel()
@@ -101,16 +113,16 @@ class MainActivity : ComponentActivity() {
                     }
                 )
 
-                Column (
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                 ) {
 
-                    when (LocalConfiguration.current.orientation)
-                    {
+                    when (LocalConfiguration.current.orientation) {
                         Configuration.ORIENTATION_LANDSCAPE -> {
-                            Row (horizontalArrangement = Arrangement.Center,
+                            Row(
+                                horizontalArrangement = Arrangement.Center,
                                 modifier = Modifier
                                     .fillMaxWidth()
                             ) {
@@ -121,9 +133,10 @@ class MainActivity : ComponentActivity() {
                                     modifier = Modifier
                                         .padding(8.dp)
                                 )
-                                Button(onClick = {
-                                    viewModel.onAction(VLTAction.ShowSettingsDialog(true))
-                                },
+                                Button(
+                                    onClick = {
+                                        viewModel.onAction(VLTAction.ShowSettingsDialog(true))
+                                    },
                                     modifier = Modifier
                                         .padding(8.dp)
                                         .weight(1f)
@@ -132,8 +145,9 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
+
                         else -> {
-                            Column (
+                            Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
                             ) {
@@ -144,9 +158,10 @@ class MainActivity : ComponentActivity() {
                                     modifier = Modifier
                                         .padding(8.dp)
                                 )
-                                Button(onClick = {
-                                    viewModel.onAction(VLTAction.ShowSettingsDialog(true))
-                                },
+                                Button(
+                                    onClick = {
+                                        viewModel.onAction(VLTAction.ShowSettingsDialog(true))
+                                    },
                                     modifier = Modifier
                                         .padding(8.dp)
                                 ) {
@@ -156,12 +171,12 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    when (LocalConfiguration.current.orientation)
-                    {
+                    when (LocalConfiguration.current.orientation) {
                         Configuration.ORIENTATION_PORTRAIT -> {
-                            Column (modifier = Modifier
-                                .fillMaxHeight()
-                                .fillMaxWidth()
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .fillMaxWidth()
                             ) {
                                 Textarea(
                                     settings = settings.value,
@@ -176,11 +191,15 @@ class MainActivity : ComponentActivity() {
                                         enabled = viewModel.state.modelLoaded,
                                         onClick = {
                                             if (checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED && !state.isRecording) {
-                                                viewModel.onAction(VLTAction.ShowPermissionsDialog(true))
+                                                viewModel.onAction(
+                                                    VLTAction.ShowPermissionsDialog(
+                                                        true
+                                                    )
+                                                )
                                             } else {
                                                 viewModel.getVoskHub().toggleRecording()
                                                 //viewModel.onAction(VLTAction.SetRecordingStatus(
-                                                    //!viewModel.state.isRecording
+                                                //!viewModel.state.isRecording
                                                 //))
                                             }
                                         },
@@ -188,7 +207,10 @@ class MainActivity : ComponentActivity() {
                                             .padding(8.dp)
                                             .weight(1f)
                                     ) {
-                                        val transcribeButtonLabel = if (viewModel.state.modelLoaded && viewModel.state.isRecording) stringResource(id = R.string.stop_transcribing) else stringResource(id = R.string.start_transcribing)
+                                        val transcribeButtonLabel =
+                                            if (viewModel.state.modelLoaded && viewModel.state.isRecording) stringResource(
+                                                id = R.string.stop_transcribing
+                                            ) else stringResource(id = R.string.start_transcribing)
                                         Text(text = transcribeButtonLabel)
                                     }
                                     Button(
@@ -214,10 +236,12 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
+
                         else -> {
-                            Column (modifier = Modifier
-                                .fillMaxHeight()
-                                .fillMaxWidth()
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .fillMaxWidth()
                             ) {
                                 Textarea(
                                     settings = settings.value,
@@ -226,20 +250,25 @@ class MainActivity : ComponentActivity() {
                                     modifier = Modifier
                                         .weight(8f)
                                 )
-                                Row (modifier = Modifier
-                                    .fillMaxWidth()
-                                    .fillMaxHeight()
-                                    .weight(3f)
-                                ){
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .fillMaxHeight()
+                                        .weight(3f)
+                                ) {
                                     Button(
                                         enabled = viewModel.state.modelLoaded,
                                         onClick = {
                                             if (checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED && !state.isRecording) {
-                                                viewModel.onAction(VLTAction.ShowPermissionsDialog(true))
+                                                viewModel.onAction(
+                                                    VLTAction.ShowPermissionsDialog(
+                                                        true
+                                                    )
+                                                )
                                             } else {
                                                 viewModel.getVoskHub().toggleRecording()
                                                 //viewModel.onAction(VLTAction.SetRecordingStatus(
-                                                    //!viewModel.state.isRecording
+                                                //!viewModel.state.isRecording
                                                 //))
                                             }
                                         },
@@ -247,7 +276,10 @@ class MainActivity : ComponentActivity() {
                                             .padding(horizontal = 8.dp)
                                             .weight(1f)
                                     ) {
-                                        val transcribeButtonLabel = if (viewModel.state.modelLoaded && viewModel.state.isRecording) stringResource(id = R.string.stop_transcribing) else stringResource(id = R.string.start_transcribing)
+                                        val transcribeButtonLabel =
+                                            if (viewModel.state.modelLoaded && viewModel.state.isRecording) stringResource(
+                                                id = R.string.stop_transcribing
+                                            ) else stringResource(id = R.string.start_transcribing)
                                         Text(text = transcribeButtonLabel)
                                     }
                                     Button(
@@ -301,17 +333,18 @@ class MainActivity : ComponentActivity() {
                             permissionTextProvider = RecordAudioPermissionTextProvider(),
                             isPermanentlyDeclined = shouldShowRequestPermissionRationale(android.Manifest.permission.RECORD_AUDIO),
                             onDismiss = {
-                                        viewModel.onAction(VLTAction.ShowPermissionsDialog(false))
+                                viewModel.onAction(VLTAction.ShowPermissionsDialog(false))
                             },
                             onOkClick = {
                                 viewModel.onAction(VLTAction.ShowPermissionsDialog(false))
-                                        requestPermissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+                                requestPermissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
                             },
                             onGoToAppSettingsClick = { openAppSettings() })
                     }
 
                     if (state.error != null) {
-                        val dialog = when (@Suppress("UNNECESSARY_NOT_NULL_ASSERTION") val err = state.error!!) {
+                        val dialog = when (@Suppress("UNNECESSARY_NOT_NULL_ASSERTION") val err =
+                            state.error!!) {
                             is ErrorKind.ConnectionFailed -> {
                                 ConnectionErrorDialog(
                                     downloadFunction = ::downloadModel,
@@ -321,6 +354,7 @@ class MainActivity : ComponentActivity() {
                                     modelPath = settings.value.language.modelPath
                                 )
                             }
+
                             is ErrorKind.UnexpectedResponse -> {
                                 UnexpectedResponseDialog(
                                     downloadFunction = ::downloadModel,
@@ -330,6 +364,7 @@ class MainActivity : ComponentActivity() {
                                     modelPath = settings.value.language.modelPath
                                 )
                             }
+
                             is ErrorKind.DataProcessionFailed -> {
                                 DataProcessingErrorDialog(
                                     downloadFunction = ::downloadModel,
@@ -339,12 +374,14 @@ class MainActivity : ComponentActivity() {
                                     modelPath = settings.value.language.modelPath
                                 )
                             }
+
                             is ErrorKind.TranscriptionTimeout -> {
                                 TimeouteErrorDialog(
                                     contactUsCallback = ::contactUs,
                                     onAction = viewModel::onAction
                                 )
                             }
+
                             is ErrorKind.ModelError -> {
                                 ModelErrorDialog(
                                     message = err.message,
@@ -362,12 +399,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
-        if(viewModel.state.isRecording)
-        {
+        if(viewModel.state.isRecording) {
             viewModel.getVoskHub().toggleRecording()
-            //viewModel.onAction(VLTAction.SetRecordingStatus(false))
         }
     }
+
     private fun contactUs() {
         Log.d(TAG, "contactUs: Function called")
         val subject = "[vlt] Feedback"
