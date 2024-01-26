@@ -89,12 +89,14 @@ class MainActivity : ComponentActivity() {
                     viewModel.getVoskHub().isModelAvailable(),
                     state.modelLoaded,
                     settings.value.language.modelPath,
+                    state.fetchState,
                     checkSelfPermission(android.Manifest.permission.RECORD_AUDIO)
                 ) {
                     viewModel.getVoskHub().setModelPath(settings.value.language.modelPath)
                     if (viewModel.getVoskHub().isModelAvailable()
                         && !state.modelLoaded
                         && checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+                        && state.fetchState == FetchState.NO_MODEL
                     ) {
                         viewModel.getVoskHub().initModel()
                     }
@@ -454,7 +456,6 @@ class MainActivity : ComponentActivity() {
                             viewModel.onAction(VLTAction.UpdateFetchState(FetchState.UNPACKING))
                             UnzipUtils.unzip(sourceFile, "$externalFilesDir/models")
                             viewModel.onAction(VLTAction.ShowDownloadSuccess(true))
-                            viewModel.getVoskHub().initModel()
                             sourceFile.delete()
                         } catch (e: IOException) {
                             viewModel.onAction(VLTAction.SetError(ErrorKind.DataProcessionFailed(
