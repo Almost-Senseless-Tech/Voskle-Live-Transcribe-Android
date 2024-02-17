@@ -90,17 +90,30 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(
                     viewModel.getVoskHub().isModelAvailable(),
+                    settings.value.language,
                     state.modelLoaded,
-                    settings.value.language.modelPath,
-                    state.fetchState,
-                    checkSelfPermission(android.Manifest.permission.RECORD_AUDIO)
+                    state.fetchState
                 ) {
-                    viewModel.getVoskHub().setModelPath(settings.value.language.modelPath)
-                    if (viewModel.getVoskHub().isModelAvailable()
-                        && !state.modelLoaded
-                        && checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
-                        && state.fetchState == FetchState.NO_MODEL
-                    ) {
+                    if (viewModel.getVoskHub().getModelPath() != settings.value.language.modelPath) {
+                        // If the language changed, change the model path referenced in VoskHub
+                        viewModel.onAction(VLTAction.SetModelStatus(false))
+                        viewModel.getVoskHub().setModelPath(settings.value.language.modelPath)
+
+                        // Dismiss the download confirmation dialog if the model is already downloaded.
+                        if (state.displayDownloadConfirmation && viewModel.getVoskHub().isModelAvailable()) {
+                            viewModel.onAction(VLTAction.ShowDownloadConfirmation(false))
+                        }
+
+                        // Initialize the model if it is already downloaded.
+                        if (viewModel.getVoskHub().isModelAvailable()) {
+                            viewModel.getVoskHub().initModel()
+                        } else {
+                            viewModel.onAction(VLTAction.ShowDownloadConfirmation(true))
+                        }
+                     }
+
+                    // Initialize the model if it's downloaded but not initialized yet.
+                    if (viewModel.getVoskHub().isModelAvailable() && !state.modelLoaded && state.fetchState == FetchState.NO_MODEL) {
                         viewModel.getVoskHub().initModel()
                     }
                 }
@@ -197,7 +210,7 @@ class MainActivity : ComponentActivity() {
                                         .toggleable(
                                             value = state.keyboardInput,
                                             role = Role.Switch,
-                                            onValueChange = { enabled ->
+                                            onValueChange = {
                                                 if (state.isRecording && !state.keyboardInput)
                                                     viewModel.getVoskHub().toggleRecording()
                                                 viewModel.onAction(VLTAction.SetKeyboardInput(

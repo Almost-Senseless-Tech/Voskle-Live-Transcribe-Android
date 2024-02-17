@@ -57,6 +57,10 @@ class VoskHub (
         this.modelPath = modelPath
     }
 
+    fun getModelPath(): String? {
+        return this.modelPath;
+    }
+
     fun initModel(): Boolean {
         if (this.model != null)
             return true
