@@ -45,6 +45,7 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
             is VLTAction.ToggleStopRecordingOnFocusLoss -> toggleStopRcordingOnFocusLoss(action.stopRecordingOnFocusLoss)
             is VLTAction.SetFocusedState -> setFocusedState(action.focused)
             is VLTAction.SetTranscriptFocused -> setTranscriptFocused(action.focused)
+            is VLTAction.SetResumeRecording -> resumeRecording(action.resume)
         }
     }
 
@@ -190,6 +191,10 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
 
     private fun setTranscriptFocused(focused: Boolean) {
         state = state.copy(transcriptFocused = focused)
+    }
+
+    private fun resumeRecording(resume: Boolean) {
+        state = state.copy(resumeRecording = resume)
     }
 }
 

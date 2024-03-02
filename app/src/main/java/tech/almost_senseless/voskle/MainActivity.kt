@@ -197,10 +197,19 @@ class MainActivity : ComponentActivity() {
                                             value = state.keyboardInput,
                                             role = Role.Switch,
                                             onValueChange = {
-                                                if (state.isRecording && !state.keyboardInput)
-                                                    viewModel
-                                                        .getVoskHub()
-                                                        .toggleRecording()
+                                                if (state.isRecording && !state.keyboardInput) {
+                                                    viewModel.onAction(
+                                                        VLTAction.SetResumeRecording(
+                                                            true
+                                                        )
+                                                    )
+                                                    viewModel.getVoskHub().toggleRecording()
+                                                }
+
+                                                if (state.keyboardInput && state.resumeRecording) {
+                                                    viewModel.getVoskHub().toggleRecording()
+                                                    viewModel.onAction(VLTAction.SetResumeRecording(false))
+                                                }
                                                 viewModel.onAction(
                                                     VLTAction.SetKeyboardInput(
                                                         !state.keyboardInput
@@ -243,10 +252,14 @@ class MainActivity : ComponentActivity() {
                                             value = state.keyboardInput,
                                             role = Role.Switch,
                                             onValueChange = {
-                                                if (state.isRecording && !state.keyboardInput)
-                                                    viewModel
-                                                        .getVoskHub()
-                                                        .toggleRecording()
+                                                if (state.isRecording && !state.keyboardInput) {
+                                                    viewModel.onAction(VLTAction.SetResumeRecording(true))
+                                                    viewModel.getVoskHub().toggleRecording()
+                                                }
+                                                if (state.keyboardInput && state.resumeRecording) {
+                                                    viewModel.getVoskHub().toggleRecording()
+                                                    viewModel.onAction(VLTAction.SetResumeRecording(false))
+                                                }
                                                 viewModel.onAction(
                                                     VLTAction.SetKeyboardInput(
                                                         !state.keyboardInput
@@ -352,7 +365,7 @@ class MainActivity : ComponentActivity() {
                                         .weight(3f)
                                 ) {
                                     Button(
-                                        enabled = viewModel.state.modelLoaded,
+                                        enabled = viewModel.state.modelLoaded && !state.keyboardInput,
                                         onClick = {
                                             if (checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED && !state.isRecording) {
                                                 viewModel.onAction(

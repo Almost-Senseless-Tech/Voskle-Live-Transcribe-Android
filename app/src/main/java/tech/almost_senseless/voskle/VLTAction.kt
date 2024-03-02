@@ -27,4 +27,5 @@ sealed class VLTAction{
     data class ToggleStopRecordingOnFocusLoss(val stopRecordingOnFocusLoss: Boolean): VLTAction()
     data class SetFocusedState(val focused: Boolean): VLTAction()
     data class SetTranscriptFocused(val focused: Boolean): VLTAction()
+    data class SetResumeRecording(val resume: Boolean): VLTAction()
 }

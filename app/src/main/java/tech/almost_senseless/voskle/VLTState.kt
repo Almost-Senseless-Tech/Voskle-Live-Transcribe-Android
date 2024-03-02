@@ -17,4 +17,5 @@ data class VLTState(
     val keyboardInput: Boolean = false,
     val isFocused: Boolean = true,
     val transcriptFocused: Boolean = false,
+    val resumeRecording: Boolean = false,
 )
