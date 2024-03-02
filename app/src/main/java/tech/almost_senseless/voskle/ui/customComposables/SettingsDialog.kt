@@ -54,6 +54,19 @@ fun SettingsDialog(
                 .fillMaxWidth()
                 .padding(vertical = 16.dp, horizontal = 8.dp)
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.End
+            ) {
+                Button(onClick = {
+                    onAction(VLTAction.ShowSettingsDialog(false))
+                }) {
+                    Text(text = stringResource(id = R.string.dialog_close))
+                }
+            }
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
