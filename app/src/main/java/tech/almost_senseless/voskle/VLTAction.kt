@@ -24,4 +24,7 @@ sealed class VLTAction{
     data class UpdateFetchState(val state: FetchState): VLTAction()
     data class SetKeyboardInput(val enabled: Boolean): VLTAction()
     data class EditTranscript(val text: String): VLTAction()
+    data class ToggleStopRecordingOnFocusLoss(val stopRecordingOnFocusLoss: Boolean): VLTAction()
+    data class SetFocusedState(val focused: Boolean): VLTAction()
+    data class SetTranscriptFocused(val focused: Boolean): VLTAction()
 }

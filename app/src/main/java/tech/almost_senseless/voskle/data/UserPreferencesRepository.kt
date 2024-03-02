@@ -19,6 +19,7 @@ data class UserPreferences(
     val language: Languages = Languages.ENGLISH_US,
     val transcriptFontRatio: Float = 3f,
     val autoscroll: Boolean = true,
+    val stopRecordingOnFocusLoss: Boolean = true
 )
 
 class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
@@ -26,6 +27,7 @@ class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
         val language = stringPreferencesKey("language")
         val transcriptionFontRatio = floatPreferencesKey("transcription_font_ratio")
         val autoscroll = booleanPreferencesKey("autoscroll")
+        val stopRecordingOnFocusLoss = booleanPreferencesKey("stopRecordingOnFocusLoss")
     }
 
     val userPreferencesFlow: Flow<UserPreferences> = dataStore.data
@@ -59,12 +61,20 @@ class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
         }
     }
 
+    suspend fun updateStopRecordingOnFocusLoss(stopRecordingOnFocusLoss: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.stopRecordingOnFocusLoss] = stopRecordingOnFocusLoss
+        }
+    }
+
+
     private fun mapUserPreferences(preferences: Preferences): UserPreferences {
         val language = Languages.valueOf(
             preferences[PreferencesKeys.language] ?: Languages.ENGLISH_US.name
         )
         val transcriptFontRatio = preferences[PreferencesKeys.transcriptionFontRatio] ?: 3f
         val autoscroll = preferences[PreferencesKeys.autoscroll] ?: true
-return UserPreferences(language, transcriptFontRatio, autoscroll)
+        val stopRecordingOnFocusLoss = preferences[PreferencesKeys.stopRecordingOnFocusLoss] ?: true
+return UserPreferences(language, transcriptFontRatio, autoscroll, stopRecordingOnFocusLoss)
     }
 }

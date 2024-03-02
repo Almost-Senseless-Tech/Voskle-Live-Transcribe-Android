@@ -42,6 +42,9 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
             is VLTAction.UpdateFetchState -> updateFetchstate(action.state)
             is VLTAction.SetKeyboardInput -> setKeyboardInput(action.enabled)
             is VLTAction.EditTranscript -> editTranscript(action.text)
+            is VLTAction.ToggleStopRecordingOnFocusLoss -> toggleStopRcordingOnFocusLoss(action.stopRecordingOnFocusLoss)
+            is VLTAction.SetFocusedState -> setFocusedState(action.focused)
+            is VLTAction.SetTranscriptFocused -> setTranscriptFocused(action.focused)
         }
     }
 
@@ -137,6 +140,12 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
         }
     }
 
+    private fun toggleStopRcordingOnFocusLoss(stopRecordingOnFocusLoss: Boolean) {
+        viewModelScope.launch {
+            userPreferences.updateStopRecordingOnFocusLoss(stopRecordingOnFocusLoss)
+        }
+    }
+
     private fun registerVoskHub(voskHub: VoskHub){
         if (state.voskHubInstance !== voskHub)
         {
@@ -171,8 +180,16 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
         state = state.copy(keyboardInput = enabled)
     }
 
-    fun editTranscript(text: String) {
+    private fun editTranscript(text: String) {
         state = state.copy(transcript = text)
+    }
+
+    private fun setFocusedState(focused: Boolean) {
+        state = state.copy(isFocused = focused)
+    }
+
+    private fun setTranscriptFocused(focused: Boolean) {
+        state = state.copy(transcriptFocused = focused)
     }
 }
 

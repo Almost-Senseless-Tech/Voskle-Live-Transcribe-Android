@@ -31,6 +31,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -87,6 +90,7 @@ class MainActivity : ComponentActivity() {
                 )
                 val state = viewModel.state
                 val settings = viewModel.settings.collectAsState(initial = UserPreferences())
+                val focusRequester = FocusRequester()
 
                 LaunchedEffect(
                     viewModel.getVoskHub().isModelAvailable(),
@@ -115,6 +119,30 @@ class MainActivity : ComponentActivity() {
                     // Initialize the model if it's downloaded but not initialized yet.
                     if (viewModel.getVoskHub().isModelAvailable() && !state.modelLoaded && state.fetchState == FetchState.NO_MODEL) {
                         viewModel.getVoskHub().initModel()
+                    }
+                }
+
+                LaunchedEffect(
+                    settings.value.stopRecordingOnFocusLoss,
+                    state.isFocused,
+                    isInMultiWindowMode,
+                    isInPictureInPictureMode,
+                    state.isRecording,
+                    state.transcriptFocused
+                ) {
+                    val windowVisible = isInMultiWindowMode || isInPictureInPictureMode
+                    if (!state.isFocused && settings.value.stopRecordingOnFocusLoss && !windowVisible && state.isRecording) {
+                        viewModel.getVoskHub().toggleRecording()
+                    }
+
+                    /*
+                    If the user re-enters the app (window gains focus) while the transcript
+                    is the focused element, a crash occurs - possibly only while using TalkBack.
+                    To avoid this, we move th focus away from the transcript when the window
+                    loses focus.
+                     */
+                    if (!state.isFocused && state.transcriptFocused) {
+                        focusRequester.requestFocus()
                     }
                 }
 
@@ -170,10 +198,14 @@ class MainActivity : ComponentActivity() {
                                             role = Role.Switch,
                                             onValueChange = {
                                                 if (state.isRecording && !state.keyboardInput)
-                                                    viewModel.getVoskHub().toggleRecording()
-                                                viewModel.onAction(VLTAction.SetKeyboardInput(
-                                                    !state.keyboardInput
-                                                ))
+                                                    viewModel
+                                                        .getVoskHub()
+                                                        .toggleRecording()
+                                                viewModel.onAction(
+                                                    VLTAction.SetKeyboardInput(
+                                                        !state.keyboardInput
+                                                    )
+                                                )
                                             }
                                         ),
                                 ) {
@@ -212,10 +244,14 @@ class MainActivity : ComponentActivity() {
                                             role = Role.Switch,
                                             onValueChange = {
                                                 if (state.isRecording && !state.keyboardInput)
-                                                    viewModel.getVoskHub().toggleRecording()
-                                                viewModel.onAction(VLTAction.SetKeyboardInput(
-                                                    !state.keyboardInput
-                                                ))
+                                                    viewModel
+                                                        .getVoskHub()
+                                                        .toggleRecording()
+                                                viewModel.onAction(
+                                                    VLTAction.SetKeyboardInput(
+                                                        !state.keyboardInput
+                                                    )
+                                                )
                                             }
                                         ),
                                 ) {
@@ -238,6 +274,9 @@ class MainActivity : ComponentActivity() {
                                     state = state,
                                     onAction = viewModel::onAction,
                                     modifier = Modifier
+                                        .onFocusChanged {
+                                            viewModel.onAction(VLTAction.SetTranscriptFocused(it.isFocused))
+                                        }
                                         .weight(5f)
                                 )
 
@@ -258,6 +297,7 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier
                                             .padding(8.dp)
                                             .weight(1f)
+                                            .focusRequester(focusRequester)
                                     ) {
                                         val transcribeButtonLabel =
                                             if (viewModel.state.modelLoaded && viewModel.state.isRecording) stringResource(
@@ -300,6 +340,9 @@ class MainActivity : ComponentActivity() {
                                     state = state,
                                     onAction = viewModel::onAction,
                                     modifier = Modifier
+                                        .onFocusChanged {
+                                            viewModel.onAction(VLTAction.SetTranscriptFocused(it.isFocused))
+                                        }
                                         .weight(8f)
                                 )
                                 Row(
@@ -324,6 +367,7 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier
                                             .padding(horizontal = 8.dp)
                                             .weight(1f)
+                                            .focusRequester(focusRequester)
                                     ) {
                                         val transcribeButtonLabel =
                                             if (viewModel.state.modelLoaded && viewModel.state.isRecording) stringResource(
@@ -445,11 +489,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        if (viewModel.state.isRecording) {
-            viewModel.getVoskHub().toggleRecording()
-        }
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+
+        viewModel.onAction(VLTAction.SetFocusedState(hasFocus))
     }
 
     private fun contactUs() {

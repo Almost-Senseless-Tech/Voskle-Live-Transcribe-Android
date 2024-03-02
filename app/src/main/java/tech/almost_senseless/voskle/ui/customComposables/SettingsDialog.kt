@@ -107,6 +107,22 @@ fun SettingsDialog(
                     Row(modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
+                        .toggleable(
+                            value = settings.stopRecordingOnFocusLoss,
+                            role = Role.Switch,
+                            onValueChange = {
+                                onAction(VLTAction.ToggleStopRecordingOnFocusLoss(!settings.stopRecordingOnFocusLoss))
+                            },
+                        ),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Switch(checked = settings.stopRecordingOnFocusLoss, null)
+                        Text(text = stringResource(id = R.string.stop_recording_on_focus_loss))
+                    }
+                }
+                item {
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
                     ) {
                         Text(text = stringResource(id = R.string.about), fontSize = 5.em,
                             modifier = Modifier.semantics { heading() },

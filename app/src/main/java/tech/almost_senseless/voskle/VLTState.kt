@@ -15,4 +15,6 @@ data class VLTState(
     val voskHubInstance: VoskHub? = null,
     val fetchState: FetchState = FetchState.NO_MODEL,
     val keyboardInput: Boolean = false,
+    val isFocused: Boolean = true,
+    val transcriptFocused: Boolean = false,
 )
