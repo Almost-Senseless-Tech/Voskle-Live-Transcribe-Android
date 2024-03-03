@@ -1,0 +1,16 @@
+{
+    "uniqueId": "com.alphacephi.vosk-model-small-sv",
+    "developers": [
+        {
+            "organizationUrl": "https://community.rhasspy.org/",
+            "name": "Rhasspy project"
+	       }
+    ],
+    "artifactVersion": "0.15",
+   "description": "Repackaged model from Rhasspy project",
+   "name": "vosk-model-small-sv",
+    "website": "https://alphacephei.com/vosk/models",
+    "licenses": [
+       "MIT"
+   ]
+}

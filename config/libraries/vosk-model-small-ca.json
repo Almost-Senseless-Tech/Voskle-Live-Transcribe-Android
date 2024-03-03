@@ -1,0 +1,16 @@
+{
+    "uniqueId": "com.alphacephi.vosk-model-small-ca",
+    "developers": [
+        {
+            "organizationUrl": "https://alphacephi.com",
+            "name": "Alphacephi Inc."
+	       }
+    ],
+    "artifactVersion": "0.4",
+   "description": "Lightweight wideband model for Android and RPi for Catalan",
+   "name": "vosk-model-small-ca",
+    "website": "https://alphacephei.com/vosk/models",
+    "licenses": [
+       "Apache-2.0"
+   ]
+}

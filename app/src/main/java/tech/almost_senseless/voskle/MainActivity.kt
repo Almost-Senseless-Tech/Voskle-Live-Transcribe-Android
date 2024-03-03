@@ -163,7 +163,6 @@ class MainActivity : ComponentActivity() {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                 ) {
 

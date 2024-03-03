@@ -1,0 +1,16 @@
+{
+    "uniqueId": "com.alphacephi.vosk-model-small-cs",
+    "developers": [
+        {
+            "organizationUrl": "https://community.rhasspy.org/",
+            "name": "Rhasspy project"
+	       }
+    ],
+    "artifactVersion": "0.4",
+   "description": "Lightweight model for Czech from Rhasspy project",
+   "name": "vosk-model-small-cs",
+    "website": "https://alphacephei.com/vosk/models",
+    "licenses": [
+       "MIT"
+   ]
+}

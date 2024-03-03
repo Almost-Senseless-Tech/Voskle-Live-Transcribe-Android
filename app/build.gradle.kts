@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
-    id("com.google.android.gms.oss-licenses-plugin")
     id("org.jetbrains.kotlin.android")
+    id("com.mikepenz.aboutlibraries.plugin")
 }
 
 android {
@@ -56,6 +56,10 @@ android {
     }
 }
 
+aboutLibraries {
+    configPath = "config"
+}
+
 dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
@@ -67,7 +71,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("com.alphacephei:vosk-android:0.3.47")
     implementation("org.json:json:20220320")
-    implementation("com.google.android.gms:play-services-oss-licenses:17.0.1")
+
     implementation("androidx.fragment:fragment-ktx:1.6.2")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     testImplementation("junit:junit:4.13.2")
@@ -79,4 +83,6 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("com.mikepenz:aboutlibraries-core:10.10.0")
+    implementation("com.mikepenz:aboutlibraries-compose-m3:10.10.0")
 }

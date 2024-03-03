@@ -1,0 +1,16 @@
+{
+    "uniqueId": "com.alphacephi.vosk-model-br",
+    "developers": [
+        {
+            "organizationUrl": "https://github.com/gweltou",
+            "name": "gweltou (Gweltaz DG)"
+	       }
+    ],
+    "artifactVersion": "0.8",
+   "description": "Breton model from vosk-br project",
+   "name": "vosk-model-br",
+    "website": "https://github.com/gweltou/vosk-br",
+    "licenses": [
+       "MIT"
+   ]
+}

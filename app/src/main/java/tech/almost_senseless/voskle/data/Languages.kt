@@ -1,6 +1,7 @@
 package tech.almost_senseless.voskle.data
 
 enum class Languages(val langName: String, val modelPath: String) {
+    ARABIC("اَلْعَرَبِيَّةُ", "vosk-model-ar-mgb2-0.4"),
     BRETON("Brezhoneg", "vosk-model-br-0.7"),
     CATALAN("català", "vosk-model-small-ca-0.4"),
     CHINESE("標準漢語", "vosk-model-small-cn-0.22"),
@@ -11,6 +12,7 @@ enum class Languages(val langName: String, val modelPath: String) {
     SPANISH("Español", "vosk-model-small-es-0.42"),
     PERSIAN("فارسی ", "vosk-model-small-fa-0.4"),
     FRENCH("Français", "vosk-model-small-fr-0.22"),
+    GUJARATI("ગુજરાતી", "vosk-model-small-gu-0.42"),
     ITALIAN("Italiano", "vosk-model-small-it-0.22"),
     KOREAN("한국어", "vosk-model-small-ko-0.22"),
     HINDI("हिन्दी", "vosk-model-small-hi-0.22"),

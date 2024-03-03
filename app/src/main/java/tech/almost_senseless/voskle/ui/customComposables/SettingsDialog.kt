@@ -32,8 +32,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.window.Dialog
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import tech.almost_senseless.voskle.BuildConfig
+import tech.almost_senseless.voskle.OSSLicensesActivity
 import tech.almost_senseless.voskle.R
 import tech.almost_senseless.voskle.VLTAction
 import tech.almost_senseless.voskle.data.UserPreferences
@@ -153,10 +153,7 @@ fun SettingsDialog(
                 item {
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Button(onClick = {
-                            val intent = with(Intent(context, OssLicensesMenuActivity::class.java)) {
-                                val title = context.getString(R.string.oss_licenses)
-                                putExtra("title", title)
-                            }
+                            val intent = Intent(context, OSSLicensesActivity::class.java)
                             context.startActivity(intent)
                         }) {
                             Text(text = stringResource(id = R.string.view_oss_licenses))

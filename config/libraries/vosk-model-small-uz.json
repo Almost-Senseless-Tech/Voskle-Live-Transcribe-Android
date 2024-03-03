@@ -1,0 +1,16 @@
+{
+    "uniqueId": "com.alphacephi.vosk-model-small-uz",
+    "developers": [
+        {
+            "organizationUrl": "https://alphacephi.com",
+            "name": "Alphacephi Inc."
+	       }
+    ],
+    "artifactVersion": "0.22",
+   "description": "Lightweight model for Uzbek",
+   "name": "vosk-model-small-uz",
+    "website": "https://alphacephei.com/vosk/models",
+    "licenses": [
+       "Apache-2.0"
+   ]
+}

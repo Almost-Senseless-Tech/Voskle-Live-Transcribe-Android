@@ -1,0 +1,16 @@
+{
+    "uniqueId": "com.alphacephi.vosk-model-small-en-in",
+    "developers": [
+        {
+            "organizationUrl": "https://alphacephi.com",
+            "name": "Alphacephi Inc."
+	       }
+    ],
+    "artifactVersion": "0.4",
+   "description": "Lightweight Indian English model for mobile applications",
+   "name": "vosk-model-small-en-in",
+    "website": "https://alphacephei.com/vosk/models",
+    "licenses": [
+       "Apache-2.0"
+   ]
+}

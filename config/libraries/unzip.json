@@ -1,0 +1,16 @@
+{
+    "uniqueId": "NitinPrakash9911.unzip",
+    "developers": [
+        {
+            "organizationUrl": "https://github.com/NitinPrakash9911",
+            "name": "NitinPrakash9911 (Nitin Prakash)"
+	       }
+    ],
+    "artifactVersion": "n/a",
+   "description": "Utilities for unzipping on Android/Kotlin",
+   "name": "Unzip Utils",
+    "website": "https://gist.github.com/NitinPraksash9911/dea21ec4b8ae7df068f8f891187b6d1e",
+    "licenses": [
+       "Apache-2.0"
+   ]
+}

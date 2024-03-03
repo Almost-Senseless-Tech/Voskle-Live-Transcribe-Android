@@ -1,0 +1,16 @@
+{
+    "uniqueId": "com.alphacephi.vosk-model-small-ar",
+    "developers": [
+        {
+            "organizationUrl": "https://kaldi-asr.org",
+            "name": "Daniel Povey"
+	       }
+    ],
+    "artifactVersion": "0.4",
+   "description": "Repackaged Arabic model trained on MGB2 dataset from Kaldi",
+   "name": "vosk-model-small-ar",
+    "website": "https://kaldi-asr.org/models/m9",
+    "licenses": [
+       "Apache-2.0"
+   ]
+}

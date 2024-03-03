@@ -1,0 +1,16 @@
+{
+    "uniqueId": "com.alphacephi.vosk-model-small-kz",
+    "developers": [
+        {
+            "organizationUrl": "https://github.com/IS2AI",
+            "name": "ISSAI"
+	       }
+    ],
+    "artifactVersion": "0.15",
+   "description": "Lightweight model from SAIDA_Kazakh",
+   "name": "vosk-model-small-kz",
+    "website": "https://github.com/IS2AI/ISSAI_SAIDA_Kazakh_ASR",
+    "licenses": [
+       "Apache-2.0"
+   ]
+}
