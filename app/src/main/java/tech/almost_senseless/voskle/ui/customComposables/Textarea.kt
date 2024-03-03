@@ -82,6 +82,10 @@ fun Textarea(
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(
             onDone = {
+                if (state.resumeRecording) {
+                    onAction(VLTAction.SetResumeRecording(false))
+                    state.voskHubInstance!!.toggleRecording()
+                }
                 onAction(VLTAction.SetKeyboardInput(false))
             }
         )
