@@ -1,9 +1,12 @@
 package tech.almost_senseless.voskle.ui.customComposables
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
@@ -13,7 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import tech.almost_senseless.voskle.R
@@ -35,13 +43,14 @@ fun Textarea(
             scrollState.animateScrollTo(scrollState.maxValue)
         }
     }
+
     TextField(
-        value = state.transcript,
+        value = state.textFieldValue,
         onValueChange = {
             if (state.keyboardInput) {
-                onAction(VLTAction.EditTranscript(it))
+                onAction(VLTAction.EditTranscript(it.text))
             } else {
-                onAction(VLTAction.UpdateTranscript(it))
+                onAction(VLTAction.UpdateTranscript(it.text))
             }
                         },
         readOnly = !state.keyboardInput,
@@ -51,7 +60,30 @@ fun Textarea(
             .padding(horizontal = 8.dp)
             .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))
             .verticalScroll(scrollState)
+            .onKeyEvent {
+                val currentSelection = state.textFieldValue.selection.start
+                if (it.key == Key.DirectionLeft && TextRange(currentSelection) != TextRange.Zero) {
+                    onAction(VLTAction.MoveCursorLeft)
+                    true
+                } else {
+                    if (it.key == Key.DirectionRight && TextRange(currentSelection) != TextRange(
+                            state.transcript.length
+                        )
+                    ) {
+                        onAction(VLTAction.MoveCursorRight)
+                        true
+                    } else {
+                        false
+                    }
+                }
+            }
             .then(modifier),
-        textStyle = LocalTextStyle.current.copy(fontSize = settings.transcriptFontRatio.em)
+        textStyle = LocalTextStyle.current.copy(fontSize = settings.transcriptFontRatio.em),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                onAction(VLTAction.SetKeyboardInput(false))
+            }
+        )
     )
 }

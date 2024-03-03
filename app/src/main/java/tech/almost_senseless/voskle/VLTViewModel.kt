@@ -4,6 +4,8 @@ package tech.almost_senseless.voskle
  import androidx.compose.runtime.getValue
  import androidx.compose.runtime.mutableStateOf
  import androidx.compose.runtime.setValue
+ import androidx.compose.ui.text.TextRange
+ import androidx.compose.ui.text.input.TextFieldValue
  import androidx.lifecycle.ViewModel
  import androidx.lifecycle.ViewModelProvider
  import androidx.lifecycle.viewModelScope
@@ -46,6 +48,8 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
             is VLTAction.SetFocusedState -> setFocusedState(action.focused)
             is VLTAction.SetTranscriptFocused -> setTranscriptFocused(action.focused)
             is VLTAction.SetResumeRecording -> resumeRecording(action.resume)
+            is VLTAction.MoveCursorLeft -> moveCursorLeft()
+            is VLTAction.MoveCursorRight -> moveCursorRight()
         }
     }
 
@@ -73,13 +77,21 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
 
     private fun updateTranscript(text: String) {
         var newTranscript = state.transcript
-        if (text.isNotEmpty()) {
-            newTranscript = if (!state.transcript.contains('\n'))
-                "$text\n"
-            else
-                newTranscript.replaceAfterLast("\n", "$text\n")
+        if (text != "\n") {
+            if (text.isNotEmpty()) {
+                newTranscript = if (!state.transcript.contains('\n'))
+                    "$text\n"
+                else
+                    newTranscript.replaceAfterLast("\n", "$text\n")
+            }
+        } else {
+            if (newTranscript.isNotEmpty() && !newTranscript.endsWith("\n"))
+                newTranscript = "$newTranscript\n"
         }
-        state = state.copy(transcript = newTranscript)
+        state = state.copy(transcript = newTranscript, textFieldValue = TextFieldValue(
+            text = newTranscript,
+            selection = TextRange(newTranscript.length)
+        ))
     }
 
     private fun updateLastLine(text: String) {
@@ -90,7 +102,10 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
             else
                 newTranscript.replaceAfterLast("\n", text)
         }
-        state = state.copy(transcript = newTranscript)
+        state = state.copy(transcript = newTranscript, textFieldValue = TextFieldValue(
+            text = newTranscript,
+            selection = TextRange(newTranscript.length)
+        ))
     }
 
     private fun setLanguagePickerState(expanded: Boolean) {
@@ -182,7 +197,26 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
     }
 
     private fun editTranscript(text: String) {
-        state = state.copy(transcript = text)
+        val textRange = TextRange(text.length)
+        if (state.textFieldValue.selection == textRange) {
+            state = state.copy(
+                transcript = text,
+                textFieldValue = TextFieldValue(
+                    text = text,
+                    selection = textRange
+                )
+            )
+        } else {
+            val lengthDiff = text.length - state.textFieldValue.text.length
+            val currentSelection = state.textFieldValue.selection.start
+            state = state.copy(
+                transcript = text,
+                textFieldValue = TextFieldValue(
+                    text = text,
+                    selection = TextRange(currentSelection + lengthDiff)
+                )
+            )
+        }
     }
 
     private fun setFocusedState(focused: Boolean) {
@@ -195,6 +229,24 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
 
     private fun resumeRecording(resume: Boolean) {
         state = state.copy(resumeRecording = resume)
+    }
+
+    private fun moveCursorLeft() {
+        val newSlection = state.textFieldValue.selection.start - 1
+        state = state.copy(
+            textFieldValue = state.textFieldValue.copy(
+                selection = TextRange(newSlection)
+            )
+        )
+    }
+
+    private fun moveCursorRight() {
+        val newSlection = state.textFieldValue.selection.start + 1
+        state = state.copy(
+            textFieldValue = state.textFieldValue.copy(
+                selection = TextRange(newSlection)
+            )
+        )
     }
 }
 

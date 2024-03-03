@@ -28,4 +28,6 @@ sealed class VLTAction{
     data class SetFocusedState(val focused: Boolean): VLTAction()
     data class SetTranscriptFocused(val focused: Boolean): VLTAction()
     data class SetResumeRecording(val resume: Boolean): VLTAction()
+    object MoveCursorLeft: VLTAction()
+    object MoveCursorRight: VLTAction()
 }

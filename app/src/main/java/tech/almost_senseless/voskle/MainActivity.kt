@@ -90,7 +90,8 @@ class MainActivity : ComponentActivity() {
                 )
                 val state = viewModel.state
                 val settings = viewModel.settings.collectAsState(initial = UserPreferences())
-                val focusRequester = FocusRequester()
+                val recordButtonFocusRequester = FocusRequester()
+                val textareaFocusRequester = FocusRequester()
 
                 LaunchedEffect(
                     viewModel.getVoskHub().isModelAvailable(),
@@ -142,7 +143,7 @@ class MainActivity : ComponentActivity() {
                     loses focus.
                      */
                     if (!state.isFocused && state.transcriptFocused) {
-                        focusRequester.requestFocus()
+                        recordButtonFocusRequester.requestFocus()
                     }
                 }
 
@@ -197,6 +198,10 @@ class MainActivity : ComponentActivity() {
                                             value = state.keyboardInput,
                                             role = Role.Switch,
                                             onValueChange = {
+                                                if (!state.keyboardInput) {
+                                                    textareaFocusRequester.requestFocus()
+                                                }
+
                                                 if (state.isRecording && !state.keyboardInput) {
                                                     viewModel.onAction(
                                                         VLTAction.SetResumeRecording(
@@ -210,6 +215,10 @@ class MainActivity : ComponentActivity() {
                                                     viewModel.getVoskHub().toggleRecording()
                                                     viewModel.onAction(VLTAction.SetResumeRecording(false))
                                                 }
+
+                                                // Trigger the insertion of a new line if necessary
+                                                viewModel.onAction(VLTAction.UpdateTranscript("\n"))
+
                                                 viewModel.onAction(
                                                     VLTAction.SetKeyboardInput(
                                                         !state.keyboardInput
@@ -252,14 +261,23 @@ class MainActivity : ComponentActivity() {
                                             value = state.keyboardInput,
                                             role = Role.Switch,
                                             onValueChange = {
+                                                if (!state.keyboardInput) {
+                                                    textareaFocusRequester.requestFocus()
+                                                }
+
                                                 if (state.isRecording && !state.keyboardInput) {
                                                     viewModel.onAction(VLTAction.SetResumeRecording(true))
                                                     viewModel.getVoskHub().toggleRecording()
                                                 }
+
                                                 if (state.keyboardInput && state.resumeRecording) {
                                                     viewModel.getVoskHub().toggleRecording()
                                                     viewModel.onAction(VLTAction.SetResumeRecording(false))
                                                 }
+
+                                                // Trigger the insertion of a new line if necessary
+                                                viewModel.onAction(VLTAction.UpdateTranscript("\n"))
+
                                                 viewModel.onAction(
                                                     VLTAction.SetKeyboardInput(
                                                         !state.keyboardInput
@@ -290,6 +308,7 @@ class MainActivity : ComponentActivity() {
                                         .onFocusChanged {
                                             viewModel.onAction(VLTAction.SetTranscriptFocused(it.isFocused))
                                         }
+                                        .focusRequester(textareaFocusRequester)
                                         .weight(5f)
                                 )
 
@@ -310,7 +329,7 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier
                                             .padding(8.dp)
                                             .weight(1f)
-                                            .focusRequester(focusRequester)
+                                            .focusRequester(recordButtonFocusRequester)
                                     ) {
                                         val transcribeButtonLabel =
                                             if (viewModel.state.modelLoaded && viewModel.state.isRecording) stringResource(
@@ -356,6 +375,7 @@ class MainActivity : ComponentActivity() {
                                         .onFocusChanged {
                                             viewModel.onAction(VLTAction.SetTranscriptFocused(it.isFocused))
                                         }
+                                        .focusRequester(textareaFocusRequester)
                                         .weight(8f)
                                 )
                                 Row(
@@ -380,7 +400,7 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier
                                             .padding(horizontal = 8.dp)
                                             .weight(1f)
-                                            .focusRequester(focusRequester)
+                                            .focusRequester(recordButtonFocusRequester)
                                     ) {
                                         val transcribeButtonLabel =
                                             if (viewModel.state.modelLoaded && viewModel.state.isRecording) stringResource(

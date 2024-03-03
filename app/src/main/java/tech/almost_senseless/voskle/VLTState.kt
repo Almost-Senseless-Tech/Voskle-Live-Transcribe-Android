@@ -1,5 +1,7 @@
 package tech.almost_senseless.voskle
 
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import tech.almost_senseless.voskle.vosklib.VoskHub
 
 data class VLTState(
@@ -18,4 +20,5 @@ data class VLTState(
     val isFocused: Boolean = true,
     val transcriptFocused: Boolean = false,
     val resumeRecording: Boolean = false,
+    val textFieldValue: TextFieldValue = TextFieldValue(text = "", selection = TextRange.Zero)
 )
