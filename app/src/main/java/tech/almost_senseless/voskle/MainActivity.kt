@@ -538,7 +538,7 @@ class MainActivity : ComponentActivity() {
         val text = "\n\n-----\n\nApp version: $appVersion ($appBuildInt)\nAndroid version: $androidSdkInt\nModel: $model"
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
-            putExtra(Intent.EXTRA_EMAIL, arrayOf("contact@tim-boettcher.email"))
+            putExtra(Intent.EXTRA_EMAIL, arrayOf("projects@almost-senseless.tech"))
             putExtra(Intent.EXTRA_SUBJECT, subject)
             putExtra(Intent.EXTRA_TEXT, text)
         }
