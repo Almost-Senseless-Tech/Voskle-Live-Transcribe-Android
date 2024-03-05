@@ -113,7 +113,10 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
     }
 
     private fun clearTranscript() {
-        state = state.copy(transcript = "")
+        state = state.copy(
+            transcript = "",
+            textFieldValue = TextFieldValue(text = "", selection = TextRange.Zero)
+        )
     }
 
     private fun showSettingsDialog(display: Boolean) {
