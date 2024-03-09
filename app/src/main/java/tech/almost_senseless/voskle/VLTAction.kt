@@ -5,7 +5,7 @@ import tech.almost_senseless.voskle.vosklib.VoskHub
 
 sealed class VLTAction{
     data class UpdateTranscript(val text: String): VLTAction()
-    data class UpdateLastLine(val text: String): VLTAction()
+    data class UpdateLastResult(val text: String): VLTAction()
     data class SetLanguage(val language: Languages): VLTAction()
     data class SetRecordingStatus(val status: Boolean): VLTAction()
     data class SetModelStatus(val status: Boolean): VLTAction()

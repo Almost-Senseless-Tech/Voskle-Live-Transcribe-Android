@@ -215,8 +215,8 @@ class MainActivity : ComponentActivity() {
                                                     viewModel.onAction(VLTAction.SetResumeRecording(false))
                                                 }
 
-                                                // Trigger the insertion of a new line if necessary
-                                                viewModel.onAction(VLTAction.UpdateTranscript("\n"))
+                                                // Trigger the insertion of a result separator if appropriate
+                                                viewModel.onAction(VLTAction.UpdateTranscript(". "))
 
                                                 viewModel.onAction(
                                                     VLTAction.SetKeyboardInput(
@@ -274,8 +274,8 @@ class MainActivity : ComponentActivity() {
                                                     viewModel.onAction(VLTAction.SetResumeRecording(false))
                                                 }
 
-                                                // Trigger the insertion of a new line if necessary
-                                                viewModel.onAction(VLTAction.UpdateTranscript("\n"))
+                                                // Trigger the insertion of a result separator if appropriate.
+                                                viewModel.onAction(VLTAction.UpdateTranscript(". "))
 
                                                 viewModel.onAction(
                                                     VLTAction.SetKeyboardInput(

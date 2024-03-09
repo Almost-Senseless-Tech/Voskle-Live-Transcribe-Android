@@ -25,7 +25,7 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
     fun onAction(action: VLTAction){
         when(action){
             is VLTAction.UpdateTranscript -> updateTranscript(action.text)
-            is VLTAction.UpdateLastLine -> updateLastLine(action.text)
+            is VLTAction.UpdateLastResult -> updateLastResult(action.text)
             is VLTAction.SetLanguage -> setLanguage(action.language)
             is VLTAction.SetRecordingStatus -> setRecordingStatus(action.status)
             is VLTAction.SetModelStatus -> setModelStatus(action.status)
@@ -77,16 +77,16 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
 
     private fun updateTranscript(text: String) {
         var newTranscript = state.transcript
-        if (text != "\n") {
+        if (text != ". ") {
             if (text.isNotEmpty()) {
-                newTranscript = if (!state.transcript.contains('\n'))
-                    "$text\n"
+                newTranscript = if (!state.transcript.contains(". "))
+                    "$text. "
                 else
-                    newTranscript.replaceAfterLast("\n", "$text\n")
+                    newTranscript.replaceAfterLast(". ", "$text. ")
             }
         } else {
-            if (newTranscript.isNotEmpty() && !newTranscript.endsWith("\n"))
-                newTranscript = "$newTranscript\n"
+            if (newTranscript.isNotEmpty() && !newTranscript.endsWith(". "))
+                newTranscript = "$newTranscript. "
         }
         state = state.copy(transcript = newTranscript, textFieldValue = TextFieldValue(
             text = newTranscript,
@@ -94,13 +94,13 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
         ))
     }
 
-    private fun updateLastLine(text: String) {
+    private fun updateLastResult(text: String) {
         var newTranscript = state.transcript
         if (text.isNotEmpty()) {
-            newTranscript = if (!state.transcript.contains('\n'))
+            newTranscript = if (!state.transcript.contains(". "))
                 text
             else
-                newTranscript.replaceAfterLast("\n", text)
+                newTranscript.replaceAfterLast(". ", text)
         }
         state = state.copy(transcript = newTranscript, textFieldValue = TextFieldValue(
             text = newTranscript,

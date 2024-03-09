@@ -134,7 +134,7 @@ class VoskHub (
     override fun onPartialResult(hypothesis: String?) {
         val data = JSONObject(hypothesis ?: "").get("partial").toString()
         if (this.viewModel != null && data.isNotEmpty())
-            updateApplicationState(VLTAction.UpdateLastLine(data))
+            updateApplicationState(VLTAction.UpdateLastResult(data))
     }
 
     override fun onResult(hypothesis: String?) {
