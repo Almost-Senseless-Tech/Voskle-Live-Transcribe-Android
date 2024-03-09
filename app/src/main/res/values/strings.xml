@@ -47,4 +47,5 @@
     <string name="keyboard_input">Keyboard input</string>
     <string name="transcript_label">Transcript:</string>
     <string name="stop_recording_on_focus_loss">Stop transcribing when the app window loses focus</string>
+    <string name="back">Back</string>
 </resources>

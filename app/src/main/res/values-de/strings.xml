@@ -47,4 +47,5 @@
     <string name="keyboard_input">Tastatureingabe</string>
     <string name="transcript_label">Transkript:</string>
     <string name="stop_recording_on_focus_loss">Transkription stoppen, wenn das Fenster den Fokus verliert</string>
+    <string name="back">Zurück</string>
 </resources>
