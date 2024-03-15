@@ -1,5 +1,6 @@
 package tech.almost_senseless.voskle.ui.customComposables
 
+import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -132,6 +133,23 @@ fun SettingsDialog(
                         Text(text = stringResource(id = R.string.stop_recording_on_focus_loss))
                     }
                 }
+                item { MyDivider() }
+                item {
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .toggleable(
+                            value = settings.generateSpeakerLabels,
+                            role = Role.Switch,
+                            onValueChange = {
+                                onAction(VLTAction.ToggleGenerateSpeakerLabels(!settings.generateSpeakerLabels))
+                        }),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Switch(checked = settings.generateSpeakerLabels, null)
+                        Text(text = stringResource(id = R.string.recognize_speakers))
+                    }
+                }
+                item { MyDivider() }
                 item {
                     Row(modifier = Modifier
                         .fillMaxWidth()
@@ -224,4 +242,8 @@ fun FontRatioRadioButtons(
 @Composable
 fun MyDivider(){
     Divider(color = Color(0xFF2d2d2d), thickness = 1.dp, modifier = Modifier.padding(vertical = 4.dp))
+}
+
+private fun downloadSpeakerModel(context: Context) {
+
 }

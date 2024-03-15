@@ -48,4 +48,8 @@
     <string name="transcript_label">Transcript:</string>
     <string name="stop_recording_on_focus_loss">Stop transcribing when the app window loses focus</string>
     <string name="back">Back</string>
+    <string name="external_files_dir_error">Cannot get external files dir. External storage state is %1$s</string>
+    <string name="recognize_speakers">Recognize speakers</string>
+    <string name="unknown_speaker">Unknown speaker: </string>
+    <string name="speaker">Speaker %1$s: </string>
 </resources>

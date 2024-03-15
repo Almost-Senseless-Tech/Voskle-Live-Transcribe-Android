@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.mikepenz.aboutlibraries.plugin")
+    kotlin("plugin.serialization")
 }
 
 android {
@@ -69,8 +70,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+
     implementation("com.alphacephei:vosk-android:0.3.47")
-    implementation("org.json:json:20220320")
 
     implementation("androidx.fragment:fragment-ktx:1.6.2")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
@@ -85,4 +86,5 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("com.mikepenz:aboutlibraries-core:10.10.0")
     implementation("com.mikepenz:aboutlibraries-compose-m3:10.10.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 }

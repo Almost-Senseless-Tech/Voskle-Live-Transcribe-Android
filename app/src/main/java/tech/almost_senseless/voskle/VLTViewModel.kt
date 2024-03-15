@@ -1,6 +1,7 @@
 package tech.almost_senseless.voskle
 
  import android.content.Context
+ import android.util.Log
  import androidx.compose.runtime.getValue
  import androidx.compose.runtime.mutableStateOf
  import androidx.compose.runtime.setValue
@@ -13,6 +14,10 @@ package tech.almost_senseless.voskle
  import tech.almost_senseless.voskle.data.Languages
  import tech.almost_senseless.voskle.data.UserPreferencesRepository
  import tech.almost_senseless.voskle.vosklib.VoskHub
+ import kotlin.math.pow
+ import kotlin.math.sqrt
+
+private const val TAG = "VLTViewModel"
 
 class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Suppress("StaticFieldLeak") private val context: Context) : ViewModel() {
 
@@ -50,6 +55,8 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
             is VLTAction.SetResumeRecording -> resumeRecording(action.resume)
             is VLTAction.MoveCursorLeft -> moveCursorLeft()
             is VLTAction.MoveCursorRight -> moveCursorRight()
+            is VLTAction.ToggleGenerateSpeakerLabels -> toggleGenerateSpeakerLabels(action.generateSpeakerLabels)
+            is VLTAction.ProcessSpeakerInfo -> processSpeakerInfo(action.speakerFingerprint, action.speakerDataLength)
         }
     }
 
@@ -76,17 +83,24 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
     }
 
     private fun updateTranscript(text: String) {
+        val speaker = if (!getVoskHub().isUsingSpeakerRecognition()) {
+            ""
+        } else if (state.currentSpeaker == null) {
+            context.getString(R.string.unknown_speaker) + " "
+        } else {
+            context.getString(R.string.speaker, (state.currentSpeaker!! + 1).toString()) + " "
+        }
         var newTranscript = state.transcript
         if (text != ". ") {
             if (text.isNotEmpty()) {
                 newTranscript = if (!state.transcript.contains(". "))
-                    "$text. "
+                    "$speaker$text. "
                 else
-                    newTranscript.replaceAfterLast(". ", "$text. ")
+                    newTranscript.replaceAfterLast(". ", "$speaker$text. ")
             }
         } else {
             if (newTranscript.isNotEmpty() && !newTranscript.endsWith(". "))
-                newTranscript = "$newTranscript. "
+                newTranscript = "$speaker$newTranscript. "
         }
         state = state.copy(transcript = newTranscript, textFieldValue = TextFieldValue(
             text = newTranscript,
@@ -250,6 +264,53 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
                 selection = TextRange(newSlection)
             )
         )
+    }
+
+    private fun toggleGenerateSpeakerLabels(generateSpeakerLabels: Boolean) {
+        viewModelScope.launch {
+            userPreferences.updateGenerateSpeakerLabels(generateSpeakerLabels)
+        }
+    }
+
+    private fun processSpeakerInfo(speakerFingerprint: DoubleArray?, speakerDataLength: Int?) {
+        if (speakerFingerprint == null || speakerDataLength == null || speakerDataLength <= 100) {
+            state = state.copy(currentSpeaker = null)
+        } else {
+            val speakers = state.speakers
+            if (speakers.isEmpty()) {
+                speakers.add(speakerFingerprint)
+                state = state.copy(currentSpeaker = 0, speakers = speakers)
+            } else {
+                var smallestDist = Double.MAX_VALUE
+                var smallestDistIndex = -1
+                speakers.forEachIndexed { i, speaker ->
+                    val dist = cosineDistance(speaker, speakerFingerprint)
+                    if (dist < smallestDist) {
+                        smallestDist = dist
+                        smallestDistIndex = i
+                    }
+                    Log.d(TAG, "processSpeakerInfo: $dist, $i")
+                }
+                state = if (smallestDist < 0.5) {
+                    state.copy(currentSpeaker = smallestDistIndex)
+                } else {
+                    speakers.add(speakerFingerprint)
+                    state.copy(speakers = speakers, currentSpeaker = speakers.size - 1)
+                }
+            }
+        }
+    }
+
+    private fun cosineDistance(a: DoubleArray, b: DoubleArray): Double {
+        var dotProduct = 0.0
+        var normA = 0.0
+        var normB = 0.0
+        a.forEachIndexed { i, v ->
+            dotProduct += v * b[i]
+            normA += v.pow(2.0)
+            normB += b[i].pow(2.0)
+        }
+        return 1.0 - dotProduct / sqrt(normA) / sqrt(normB)
     }
 }
 

@@ -19,7 +19,8 @@ data class UserPreferences(
     val language: Languages = Languages.ENGLISH_US,
     val transcriptFontRatio: Float = 3f,
     val autoscroll: Boolean = true,
-    val stopRecordingOnFocusLoss: Boolean = true
+    val stopRecordingOnFocusLoss: Boolean = true,
+    val generateSpeakerLabels: Boolean = false
 )
 
 class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
@@ -28,6 +29,7 @@ class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
         val transcriptionFontRatio = floatPreferencesKey("transcription_font_ratio")
         val autoscroll = booleanPreferencesKey("autoscroll")
         val stopRecordingOnFocusLoss = booleanPreferencesKey("stopRecordingOnFocusLoss")
+        val generateSpeakerLabels = booleanPreferencesKey("generateSpeakerLabels")
     }
 
     val userPreferencesFlow: Flow<UserPreferences> = dataStore.data
@@ -67,6 +69,11 @@ class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
         }
     }
 
+    suspend fun updateGenerateSpeakerLabels(generateSpeakerLabels: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.generateSpeakerLabels] = generateSpeakerLabels
+        }
+    }
 
     private fun mapUserPreferences(preferences: Preferences): UserPreferences {
         val language = Languages.valueOf(
@@ -75,6 +82,7 @@ class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
         val transcriptFontRatio = preferences[PreferencesKeys.transcriptionFontRatio] ?: 3f
         val autoscroll = preferences[PreferencesKeys.autoscroll] ?: true
         val stopRecordingOnFocusLoss = preferences[PreferencesKeys.stopRecordingOnFocusLoss] ?: true
-return UserPreferences(language, transcriptFontRatio, autoscroll, stopRecordingOnFocusLoss)
+        val generateSpeakerLabels = preferences[PreferencesKeys.generateSpeakerLabels] ?: false
+return UserPreferences(language, transcriptFontRatio, autoscroll, stopRecordingOnFocusLoss, generateSpeakerLabels)
     }
 }

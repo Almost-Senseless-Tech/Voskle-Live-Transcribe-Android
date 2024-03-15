@@ -30,4 +30,6 @@ sealed class VLTAction{
     data class SetResumeRecording(val resume: Boolean): VLTAction()
     object MoveCursorLeft: VLTAction()
     object MoveCursorRight: VLTAction()
+    data class ToggleGenerateSpeakerLabels(val generateSpeakerLabels: Boolean): VLTAction()
+    data class ProcessSpeakerInfo(val speakerFingerprint: DoubleArray?, val speakerDataLength: Int?): VLTAction()
 }

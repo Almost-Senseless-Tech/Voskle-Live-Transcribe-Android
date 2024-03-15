@@ -4,12 +4,14 @@ import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import org.json.JSONObject
+import kotlinx.serialization.json.Json
 import org.vosk.Model
 import org.vosk.Recognizer
+import org.vosk.SpeakerModel
 import org.vosk.android.RecognitionListener
 import org.vosk.android.SpeechService
 import tech.almost_senseless.voskle.ErrorKind
+import tech.almost_senseless.voskle.R
 import tech.almost_senseless.voskle.VLTAction
 import tech.almost_senseless.voskle.VLTViewModel
 import tech.almost_senseless.voskle.data.Languages
@@ -19,6 +21,7 @@ import java.util.concurrent.Executors
 import java.util.function.Consumer
 
 private const val TAG = "VoskHub"
+private const val SPEAKER_MODEL_PATH = "vosk-model-spk-0.4"
 
 class VoskHub (
     private val context: Context
@@ -31,7 +34,12 @@ class VoskHub (
     private var speechService: SpeechService? = null
     private var modelPath: String? = null
     private var model: Model? = null
+    private var speakerModel: SpeakerModel? = null
 
+    // Utility for decoding the results
+    private val json = Json {
+        encodeDefaults = true
+    }
 
     // ViewModel methods
     fun subscribeToViewModel(viewModel: VLTViewModel): Boolean{
@@ -58,10 +66,10 @@ class VoskHub (
     }
 
     fun getModelPath(): String? {
-        return this.modelPath;
+        return this.modelPath
     }
 
-    fun initModel(): Boolean {
+    fun initModel(withSpeakerModel: Boolean = false): Boolean {
         if (this.model != null)
             return true
         if (this.modelPath != null && isModelAvailable()) {
@@ -69,6 +77,22 @@ class VoskHub (
             val currentLanguage = modelPath ?: Languages.ENGLISH_US.modelPath
             getModel(currentLanguage,
                 { model: Model? ->
+                    if (withSpeakerModel && isSpeakerModelAvailable()) {
+                        try {
+                            val externalFilesDir =
+                                this.context.getExternalFilesDir(null) ?: throw IOException(
+                                    "" +
+                                            context.getString(
+                                                R.string.external_files_dir_error,
+                                                Environment.getExternalStorageState()
+                                            )
+                                )
+                            speakerModel =
+                                SpeakerModel("$externalFilesDir/models/$SPEAKER_MODEL_PATH")
+                        } catch (e: IOException) {
+                            onError(e)
+                        }
+                    }
                     this.model = model
                     updateApplicationState(VLTAction.SetModelStatus(true))
                     if (viewModel!!.state.isRecording) {
@@ -87,7 +111,9 @@ class VoskHub (
         val handler = Handler(Looper.getMainLooper())
         executor.execute {
             try {
-                val externalFilesDir = this.context.getExternalFilesDir(null) ?: throw IOException("Cannot get external files dir. External storage state is ${Environment.getExternalStorageState()}.")
+                val externalFilesDir = this.context.getExternalFilesDir(null) ?: throw IOException("" +
+                        context.getString(R.string.external_files_dir_error, Environment.getExternalStorageState())
+                )
                 val model = Model("$externalFilesDir/models/$modelPath")
                 Log.d(TAG, "getModel: Model created successfully.")
                 handler.post { completeCallback.accept(model) }
@@ -105,6 +131,13 @@ class VoskHub (
         return dir.exists() && dir.isDirectory
     }
 
+    private fun isSpeakerModelAvailable(): Boolean {
+        val externalFilesDir = context.getExternalFilesDir(null)
+        val dir = File("$externalFilesDir/models/$SPEAKER_MODEL_PATH")
+        return dir.exists() && dir.isDirectory
+    }
+
+
     // Transcription methods
     fun toggleRecording() {
         // Don't act if VoskHub is not properly initialized
@@ -121,6 +154,7 @@ class VoskHub (
         } else {
             try {
                 val rec = Recognizer(model, 16000.0f)
+                rec.setSpeakerModel(speakerModel)
                 speechService = SpeechService(rec, 16000.0f)
                 speechService!!.startListening(this)
                 updateApplicationState(VLTAction.SetRecordingStatus(true))
@@ -132,21 +166,27 @@ class VoskHub (
 
     // VOSK methods
     override fun onPartialResult(hypothesis: String?) {
-        val data = JSONObject(hypothesis ?: "").get("partial").toString()
-        if (this.viewModel != null && data.isNotEmpty())
-            updateApplicationState(VLTAction.UpdateLastResult(data))
+        Log.d(TAG, "onPartialResult: $hypothesis")
+        val partialResult: PartialResult = json.decodeFromString(hypothesis ?: "")
+        if (this.viewModel != null && partialResult.partial.isNotEmpty())
+            updateApplicationState(VLTAction.UpdateLastResult(partialResult.partial))
     }
 
     override fun onResult(hypothesis: String?) {
-        val data = JSONObject(hypothesis ?: "").get("text").toString()
-        if (this.viewModel != null && data.isNotEmpty())
-            updateApplicationState(VLTAction.UpdateTranscript(data))
+        Log.d(TAG, "onResult: $hypothesis")
+        val result: Result = json.decodeFromString(hypothesis ?: "")
+        if (this.viewModel != null && result.text.isNotEmpty()) {
+            if (speakerModel != null) {
+                updateApplicationState(VLTAction.ProcessSpeakerInfo(result.speakerFingerprint, result.speakerDataLength))
+                updateApplicationState(VLTAction.UpdateTranscript(result.text))
+            }
+        }
     }
 
     override fun onFinalResult(hypothesis: String?) {
-        val data = JSONObject(hypothesis ?: "").get("text").toString()
-        if (this.viewModel != null && data.isNotEmpty())
-            updateApplicationState(VLTAction.UpdateTranscript(data))
+        val result: Result = json.decodeFromString(hypothesis ?: "")
+        if (this.viewModel != null && result.text.isNotEmpty())
+            updateApplicationState(VLTAction.UpdateTranscript(result.text))
     }
 
     override fun onError(exception: Exception?) {
@@ -167,11 +207,15 @@ class VoskHub (
         ))
     }
 
-    // Safety methods
+    fun isUsingSpeakerRecognition(): Boolean {
+        return speakerModel != null
+    }
+
     fun reset(){
         speechService?.stop()
         speechService?.shutdown()
         speechService = null
+        speakerModel = null
         model = null
         updateApplicationState(VLTAction.SetModelStatus(false)) // Keep this in mind when using reset!
     }

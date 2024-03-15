@@ -97,7 +97,8 @@ class MainActivity : ComponentActivity() {
                     viewModel.getVoskHub().isModelAvailable(),
                     settings.value.language,
                     state.modelLoaded,
-                    state.fetchState
+                    state.fetchState,
+                    settings.value.generateSpeakerLabels
                 ) {
                     if (viewModel.getVoskHub().getModelPath() != settings.value.language.modelPath) {
                         // If the language changed, change the model path referenced in VoskHub
@@ -111,7 +112,7 @@ class MainActivity : ComponentActivity() {
 
                         // Initialize the model if it is already downloaded.
                         if (viewModel.getVoskHub().isModelAvailable()) {
-                            viewModel.getVoskHub().initModel()
+                            viewModel.getVoskHub().initModel(settings.value.generateSpeakerLabels)
                         } else {
                             viewModel.onAction(VLTAction.ShowDownloadConfirmation(true))
                         }
@@ -119,7 +120,17 @@ class MainActivity : ComponentActivity() {
 
                     // Initialize the model if it's downloaded but not initialized yet.
                     if (viewModel.getVoskHub().isModelAvailable() && !state.modelLoaded && state.fetchState == FetchState.NO_MODEL) {
-                        viewModel.getVoskHub().initModel()
+                        viewModel.getVoskHub().initModel(settings.value.generateSpeakerLabels)
+                    }
+
+                    // Reinitialize themodel if speaker recognition is wanted
+                    // but not enabled.
+                    if (settings.value.generateSpeakerLabels && !viewModel.getVoskHub().isUsingSpeakerRecognition()) {
+                        viewModel.getVoskHub().reset()
+                    }
+
+                    if (!settings.value.generateSpeakerLabels && viewModel.getVoskHub().isUsingSpeakerRecognition()) {
+                        viewModel.getVoskHub().reset()
                     }
                 }
 
