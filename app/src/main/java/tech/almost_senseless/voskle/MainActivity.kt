@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -253,8 +254,8 @@ class MainActivity : ComponentActivity() {
                                             }
                                         ),
                                 ) {
-                                    Switch(checked = state.keyboardInput, null)
-                                    Text(text = stringResource(id = R.string.keyboard_input))
+                                    Switch(checked = state.keyboardInput, null, modifier = Modifier.padding(horizontal = 8.dp))
+                                    Text(text = stringResource(id = R.string.keyboard_input), color = MaterialTheme.colorScheme.tertiary)
                                 }
                             }
                         }
@@ -324,8 +325,8 @@ class MainActivity : ComponentActivity() {
                                             }
                                         ),
                                 ) {
-                                    Switch(checked = state.keyboardInput, null)
-                                    Text(text = stringResource(id = R.string.keyboard_input))
+                                    Switch(checked = state.keyboardInput, null, modifier = Modifier.padding(horizontal = 8.dp))
+                                    Text(text = stringResource(id = R.string.keyboard_input), color = MaterialTheme.colorScheme.tertiary)
                                 }
                             }
                         }
@@ -396,7 +397,7 @@ class MainActivity : ComponentActivity() {
                                         .weight(1f)
                                         .padding(8.dp)
                                 ) {
-                                    Text(text = getFetchStateText(state.fetchState))
+                                    Text(text = getFetchStateText(state.fetchState), color = MaterialTheme.colorScheme.tertiary)
                                     if (state.modelProcessingProgress != null) {
                                         LinearProgressIndicator(
                                             progress = state.modelProcessingProgress / 100f,
@@ -476,7 +477,7 @@ class MainActivity : ComponentActivity() {
                                         .padding(8.dp)
                                         .weight(1f)
                                 ) {
-                                    Text(text = getFetchStateText(state.fetchState))
+                                    Text(text = getFetchStateText(state.fetchState), color = MaterialTheme.colorScheme.tertiary)
                                     if (state.modelProcessingProgress != null) {
                                         LinearProgressIndicator(
                                             progress = state.modelProcessingProgress / 100f,
