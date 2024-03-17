@@ -1,9 +1,9 @@
 {
-    "uniqueId": "com.alphacephi.vosk-model-small-vn",
+    "uniqueId": "com.alphacephei.vosk-model-small-vn",
     "developers": [
         {
-            "organizationUrl": "https://alphacephi.com",
-            "name": "Alphacephi Inc."
+            "organizationUrl": "https://alphacephei.com",
+            "name": "Alpha Xephei Inc."
 	       }
     ],
     "artifactVersion": "0.4",

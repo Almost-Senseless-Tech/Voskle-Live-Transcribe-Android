@@ -1,0 +1,16 @@
+{
+    "uniqueId": "com.gaumala.ObservableInputStream",
+    "developers": [
+        {
+            "organizationUrl": "https://gaumala.com",
+            "name": "GAumala (Gabriel Aumala)"
+	       }
+    ],
+    "artifactVersion": "N/A",
+   "description": "Utilities for observing how many bytes have been processed in a Kotlin stream",
+   "name": "ObservableInputStream",
+    "website": "https://gaumala.com/posts/2020-01-27-working-with-streams-kotlin.html",
+    "licenses": [
+       "BSD-3-Clause"
+   ]
+}

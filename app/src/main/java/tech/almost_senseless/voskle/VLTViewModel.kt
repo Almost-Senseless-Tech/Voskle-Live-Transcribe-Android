@@ -57,6 +57,8 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
             is VLTAction.MoveCursorRight -> moveCursorRight()
             is VLTAction.ToggleGenerateSpeakerLabels -> toggleGenerateSpeakerLabels(action.generateSpeakerLabels)
             is VLTAction.ProcessSpeakerInfo -> processSpeakerInfo(action.speakerFingerprint, action.speakerDataLength)
+            is VLTAction.UpdateModelProcessingProgress -> updateModelProcessingProgress((action.progress))
+            is VLTAction.UpdateSpeakerModelProcessingProgress -> updateSpeakerModelProcessingProgress(action.progress)
         }
     }
 
@@ -83,7 +85,7 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
     }
 
     private fun updateTranscript(text: String) {
-        val speaker = if (!getVoskHub().isUsingSpeakerRecognition()) {
+        val speaker = if (!getVoskHub().isUsingSpeakerRecognition() || state.currentSpeaker == state.previousSpeaker) {
             ""
         } else if (state.currentSpeaker == null) {
             context.getString(R.string.unknown_speaker) + " "
@@ -105,7 +107,7 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
         state = state.copy(transcript = newTranscript, textFieldValue = TextFieldValue(
             text = newTranscript,
             selection = TextRange(newTranscript.length)
-        ))
+        ), previousSpeaker = state.currentSpeaker)
     }
 
     private fun updateLastResult(text: String) {
@@ -192,14 +194,14 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
     }
 
 
-    private fun initVoskHub(){
+    private fun initVoskHub() {
         val voskHub = VoskHub(context)
         voskHub.subscribeToViewModel(this)
         voskHub.initModel()
     }
 
     fun getVoskHub(): VoskHub {
-        if(this.state.voskHubInstance == null)
+        if (this.state.voskHubInstance == null)
             this.initVoskHub()
         return this.state.voskHubInstance!!
     }
@@ -311,6 +313,14 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
             normB += b[i].pow(2.0)
         }
         return 1.0 - dotProduct / sqrt(normA) / sqrt(normB)
+    }
+
+    private fun updateModelProcessingProgress(progress: Float?) {
+        state = state.copy(modelProcessingProgress = progress)
+    }
+
+    private fun updateSpeakerModelProcessingProgress(progress: Float?) {
+        state = state.copy(speakerModelProcessingProgress = progress)
     }
 }
 

@@ -21,7 +21,7 @@ import java.util.concurrent.Executors
 import java.util.function.Consumer
 
 private const val TAG = "VoskHub"
-private const val SPEAKER_MODEL_PATH = "vosk-model-spk-0.4"
+const val SPEAKER_MODEL_PATH = "vosk-model-spk-0.4"
 
 class VoskHub (
     private val context: Context
@@ -131,7 +131,7 @@ class VoskHub (
         return dir.exists() && dir.isDirectory
     }
 
-    private fun isSpeakerModelAvailable(): Boolean {
+    fun isSpeakerModelAvailable(): Boolean {
         val externalFilesDir = context.getExternalFilesDir(null)
         val dir = File("$externalFilesDir/models/$SPEAKER_MODEL_PATH")
         return dir.exists() && dir.isDirectory
@@ -154,7 +154,9 @@ class VoskHub (
         } else {
             try {
                 val rec = Recognizer(model, 16000.0f)
-                rec.setSpeakerModel(speakerModel)
+                if (speakerModel != null) {
+                    rec.setSpeakerModel(speakerModel)
+                }
                 speechService = SpeechService(rec, 16000.0f)
                 speechService!!.startListening(this)
                 updateApplicationState(VLTAction.SetRecordingStatus(true))
@@ -173,13 +175,13 @@ class VoskHub (
     }
 
     override fun onResult(hypothesis: String?) {
-        Log.d(TAG, "onResult: $hypothesis")
         val result: Result = json.decodeFromString(hypothesis ?: "")
+        Log.d(TAG, "onResult: $result, ${result.text}")
         if (this.viewModel != null && result.text.isNotEmpty()) {
             if (speakerModel != null) {
                 updateApplicationState(VLTAction.ProcessSpeakerInfo(result.speakerFingerprint, result.speakerDataLength))
-                updateApplicationState(VLTAction.UpdateTranscript(result.text))
             }
+            updateApplicationState(VLTAction.UpdateTranscript(result.text))
         }
     }
 

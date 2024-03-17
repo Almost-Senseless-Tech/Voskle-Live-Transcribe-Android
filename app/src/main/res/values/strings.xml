@@ -50,6 +50,7 @@
     <string name="back">Back</string>
     <string name="external_files_dir_error">Cannot get external files dir. External storage state is %1$s</string>
     <string name="recognize_speakers">Recognize speakers</string>
-    <string name="unknown_speaker">Unknown speaker: </string>
-    <string name="speaker">Speaker %1$s: </string>
+    <string name="unknown_speaker">Unknown:</string>
+    <string name="speaker">Person %1$s:</string>
+    <string name="download_speaker_model">Download model for speaker recognition</string>
 </resources>

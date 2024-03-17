@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -33,15 +34,27 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.window.Dialog
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import tech.almost_senseless.voskle.BuildConfig
+import tech.almost_senseless.voskle.ErrorKind
 import tech.almost_senseless.voskle.OSSLicensesActivity
 import tech.almost_senseless.voskle.R
 import tech.almost_senseless.voskle.VLTAction
+import tech.almost_senseless.voskle.VLTState
 import tech.almost_senseless.voskle.data.UserPreferences
+import tech.almost_senseless.voskle.util.ObservableInputStream
+import tech.almost_senseless.voskle.util.UnzipUtils
+import tech.almost_senseless.voskle.vosklib.SPEAKER_MODEL_PATH
+import java.io.IOException
 
 @Composable
 fun SettingsDialog(
     settings: UserPreferences,
+    state: VLTState,
     contactUs: () -> Unit,
     onAction: (VLTAction) -> Unit,
 ) {
@@ -135,18 +148,45 @@ fun SettingsDialog(
                 }
                 item { MyDivider() }
                 item {
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                        .toggleable(
-                            value = settings.generateSpeakerLabels,
-                            role = Role.Switch,
-                            onValueChange = {
-                                onAction(VLTAction.ToggleGenerateSpeakerLabels(!settings.generateSpeakerLabels))
-                        }),
-                        verticalAlignment = Alignment.CenterVertically) {
-                        Switch(checked = settings.generateSpeakerLabels, null)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                            .toggleable(
+                                value = settings.generateSpeakerLabels,
+                                role = Role.Switch,
+                                enabled = state.voskHubInstance?.isSpeakerModelAvailable() ?: false,
+                                onValueChange = {
+                                    onAction(VLTAction.ToggleGenerateSpeakerLabels(!settings.generateSpeakerLabels))
+                                }),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Switch(
+                            checked = settings.generateSpeakerLabels,
+                            onCheckedChange = null,
+                            enabled = state.voskHubInstance?.isSpeakerModelAvailable() ?: false
+                        )
                         Text(text = stringResource(id = R.string.recognize_speakers))
+                    }
+                    if (state.voskHubInstance?.isSpeakerModelAvailable() == false) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                        ) {
+                            Button(onClick = {
+                                             downloadSpeakerModel(context, onAction)
+                            },
+                                enabled = !state.voskHubInstance.isSpeakerModelAvailable() && (state.speakerModelProcessingProgress == null),
+                            ) {
+                                Text(text = stringResource(id = R.string.download_speaker_model))
+                            }
+                            if (state.speakerModelProcessingProgress != null) {
+                                LinearProgressIndicator(progress = state.speakerModelProcessingProgress / 100f)
+                            }
+                        }
                     }
                 }
                 item { MyDivider() }
@@ -244,6 +284,48 @@ fun MyDivider(){
     Divider(color = Color(0xFF2d2d2d), thickness = 1.dp, modifier = Modifier.padding(vertical = 4.dp))
 }
 
-private fun downloadSpeakerModel(context: Context) {
+private fun downloadSpeakerModel(context: Context, onAction: (VLTAction) -> Unit) {
+    val url = "https://alphacephei.com/vosk/models/$SPEAKER_MODEL_PATH.zip"
+    val request = Request.Builder()
+        .url(url)
+        .build()
+    val httpClient = OkHttpClient()
+    httpClient.newCall(request).enqueue(object: Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            onAction(VLTAction.SetError(ErrorKind.ConnectionFailed(e.localizedMessage ?: "")))
+        }
 
+        override fun onResponse(call: Call, response: Response) {
+            response.use {
+                if (!response.isSuccessful) {
+                    onAction(VLTAction.SetError(
+                        ErrorKind.UnexpectedResponse("${response.code} (${response.message})")
+                    ))
+                } else {
+                    try {
+                        val externalFilesDir = context.getExternalFilesDir(null)
+                        val dataStream = ObservableInputStream(response.body!!.byteStream()) {
+                            val progress = it * 100 / response.body!!.contentLength()
+                            onAction(VLTAction.UpdateSpeakerModelProcessingProgress(progress.toFloat()))
+                        }
+                        val sourceFile = kotlin.io.path.createTempFile().toFile()
+                        sourceFile.outputStream().use { output ->
+                            dataStream.copyTo(output)
+                        }
+                        UnzipUtils.unzip(sourceFile, "$externalFilesDir/models")
+                        onAction(VLTAction.UpdateSpeakerModelProcessingProgress(null))
+                        sourceFile.delete()
+                    } catch (e: IOException) {
+                        onAction(VLTAction.SetError(ErrorKind.DataProcessionFailed(
+                        if (e.localizedMessage != null) {
+                            "${e.localizedMessage}\n"
+                        } else {
+                            ""
+                        }
+                        )))
+                    }
+                }
+            }
+        }
+    })
 }

@@ -50,6 +50,7 @@
     <string name="back">Zurück</string>
     <string name="external_files_dir_error">Kann nicht auf externe Dateien zugreifen. Der Status des externen Speichers ist %1$s</string>
     <string name="recognize_speakers">Sprecher erkennen</string>
-    <string name="unknown_speaker">Unbekannter Sprecher: </string>
-    <string name="speaker">Sprecher %1$s: </string>
+    <string name="unknown_speaker">Unbekannt:</string>
+    <string name="speaker">Person %1$s:</string>
+    <string name="download_speaker_model">Modell für Sprechererkkennung herunterladen</string>
 </resources>

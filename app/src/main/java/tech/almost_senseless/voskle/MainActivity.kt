@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.Button
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -63,6 +64,7 @@ import tech.almost_senseless.voskle.ui.customComposables.Textarea
 import tech.almost_senseless.voskle.ui.customComposables.TimeouteErrorDialog
 import tech.almost_senseless.voskle.ui.customComposables.UnexpectedResponseDialog
 import tech.almost_senseless.voskle.ui.theme.VoskleLiveTranscribeTheme
+import tech.almost_senseless.voskle.util.ObservableInputStream
 import tech.almost_senseless.voskle.util.UnzipUtils
 import java.io.IOException
 import kotlin.io.path.createTempFile
@@ -123,14 +125,20 @@ class MainActivity : ComponentActivity() {
                         viewModel.getVoskHub().initModel(settings.value.generateSpeakerLabels)
                     }
 
-                    // Reinitialize themodel if speaker recognition is wanted
+                    // A local variable is preferable here, as we don't
+                    // want to accidentally initialize the model with the wrong settings.
+                    val vosk = viewModel.getVoskHub()
+
+                    // Reinitialize the model if speaker recognition is wanted
                     // but not enabled.
-                    if (settings.value.generateSpeakerLabels && !viewModel.getVoskHub().isUsingSpeakerRecognition()) {
-                        viewModel.getVoskHub().reset()
+                    if (settings.value.generateSpeakerLabels && state.modelLoaded && state.fetchState == FetchState.READY && !vosk.isUsingSpeakerRecognition()) {
+                        vosk.reset()
+                        vosk.initModel(true)
                     }
 
-                    if (!settings.value.generateSpeakerLabels && viewModel.getVoskHub().isUsingSpeakerRecognition()) {
-                        viewModel.getVoskHub().reset()
+                    if (!settings.value.generateSpeakerLabels && state.modelLoaded && state.fetchState == FetchState.READY && vosk.isUsingSpeakerRecognition()) {
+                        vosk.reset()
+                        vosk.initModel()
                     }
                 }
 
@@ -218,12 +226,20 @@ class MainActivity : ComponentActivity() {
                                                             true
                                                         )
                                                     )
-                                                    viewModel.getVoskHub().toggleRecording()
+                                                    viewModel
+                                                        .getVoskHub()
+                                                        .toggleRecording()
                                                 }
 
                                                 if (state.keyboardInput && state.resumeRecording) {
-                                                    viewModel.getVoskHub().toggleRecording()
-                                                    viewModel.onAction(VLTAction.SetResumeRecording(false))
+                                                    viewModel
+                                                        .getVoskHub()
+                                                        .toggleRecording()
+                                                    viewModel.onAction(
+                                                        VLTAction.SetResumeRecording(
+                                                            false
+                                                        )
+                                                    )
                                                 }
 
                                                 // Trigger the insertion of a result separator if appropriate
@@ -276,13 +292,25 @@ class MainActivity : ComponentActivity() {
                                                 }
 
                                                 if (state.isRecording && !state.keyboardInput) {
-                                                    viewModel.onAction(VLTAction.SetResumeRecording(true))
-                                                    viewModel.getVoskHub().toggleRecording()
+                                                    viewModel.onAction(
+                                                        VLTAction.SetResumeRecording(
+                                                            true
+                                                        )
+                                                    )
+                                                    viewModel
+                                                        .getVoskHub()
+                                                        .toggleRecording()
                                                 }
 
                                                 if (state.keyboardInput && state.resumeRecording) {
-                                                    viewModel.getVoskHub().toggleRecording()
-                                                    viewModel.onAction(VLTAction.SetResumeRecording(false))
+                                                    viewModel
+                                                        .getVoskHub()
+                                                        .toggleRecording()
+                                                    viewModel.onAction(
+                                                        VLTAction.SetResumeRecording(
+                                                            false
+                                                        )
+                                                    )
                                                 }
 
                                                 // Trigger the insertion of a result separator if appropriate.
@@ -360,13 +388,21 @@ class MainActivity : ComponentActivity() {
                                     }
 
                                 }
-                                Row(modifier = Modifier
-                                    .semantics { liveRegion = LiveRegionMode.Assertive }
-                                    .weight(1f)
-                                    .padding(8.dp)
-                                    .align(Alignment.CenterHorizontally)
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .semantics { liveRegion = LiveRegionMode.Assertive }
+                                        .weight(1f)
+                                        .padding(8.dp)
                                 ) {
                                     Text(text = getFetchStateText(state.fetchState))
+                                    if (state.modelProcessingProgress != null) {
+                                        LinearProgressIndicator(
+                                            progress = state.modelProcessingProgress / 100f,
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -432,12 +468,21 @@ class MainActivity : ComponentActivity() {
                                 }
 
 
-                                Row(modifier = Modifier
-                                    .semantics { liveRegion = LiveRegionMode.Assertive }
-                                    .padding(8.dp)
-                                    .align(Alignment.CenterHorizontally)
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .semantics { liveRegion = LiveRegionMode.Assertive }
+                                        .padding(8.dp)
+                                        .weight(1f)
                                 ) {
                                     Text(text = getFetchStateText(state.fetchState))
+                                    if (state.modelProcessingProgress != null) {
+                                        LinearProgressIndicator(
+                                            progress = state.modelProcessingProgress / 100f,
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -447,6 +492,7 @@ class MainActivity : ComponentActivity() {
                     if (state.displaySettingsDialog) {
                         SettingsDialog(
                             settings = settings.value,
+                            state = state,
                             contactUs = ::contactUs,
                             onAction = viewModel::onAction
                         )
@@ -580,7 +626,10 @@ class MainActivity : ComponentActivity() {
                     } else {
                         try {
                             val externalFilesDir = applicationContext.getExternalFilesDir(null)
-                            val dataStream = response.body!!.byteStream()
+                            val dataStream = ObservableInputStream(response.body!!.byteStream()) {
+                                val progress = it * 100 / response.body!!.contentLength()
+                                viewModel.onAction(VLTAction.UpdateModelProcessingProgress(progress.toFloat()))
+                            }
                             val sourceFile = createTempFile().toFile()
                             sourceFile.outputStream().use { output ->
                                 dataStream.copyTo(output)
@@ -588,6 +637,7 @@ class MainActivity : ComponentActivity() {
                             viewModel.onAction(VLTAction.UpdateFetchState(FetchState.UNPACKING))
                             UnzipUtils.unzip(sourceFile, "$externalFilesDir/models")
                             viewModel.onAction(VLTAction.ShowDownloadSuccess(true))
+                            viewModel.onAction(VLTAction.UpdateModelProcessingProgress(null))
                             sourceFile.delete()
                         } catch (e: IOException) {
                             viewModel.onAction(VLTAction.SetError(ErrorKind.DataProcessionFailed(

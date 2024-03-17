@@ -23,8 +23,7 @@ data class VLTState(
     val textFieldValue: TextFieldValue = TextFieldValue(text = "", selection = TextRange.Zero),
     val speakers: MutableList<DoubleArray> = mutableListOf(),
     val currentSpeaker: Int? = null,
-    val previousSpeaker: Int? = null,
-    val downloadingSpeakerModel: Boolean = false,
-    val showSpeakerModelDownloadConfirmation: Boolean = false,
-    val showSpeakerModelDownloadSuccess = false
+    val previousSpeaker: Int? = -1,
+    val modelProcessingProgress: Float? = null,
+    val speakerModelProcessingProgress: Float? = null
 )
