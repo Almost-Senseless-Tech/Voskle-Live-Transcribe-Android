@@ -7,6 +7,7 @@ package tech.almost_senseless.voskle
  import androidx.compose.runtime.setValue
  import androidx.compose.ui.text.TextRange
  import androidx.compose.ui.text.input.TextFieldValue
+ import androidx.compose.ui.unit.TextUnit
  import androidx.lifecycle.ViewModel
  import androidx.lifecycle.ViewModelProvider
  import androidx.lifecycle.viewModelScope
@@ -147,7 +148,7 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
         downloadFunction(this, modelPath)
     }
 
-    private fun setTranscriptFontRatio(ratio: Float) {
+    private fun setTranscriptFontRatio(ratio: TextUnit) {
         viewModelScope.launch {
             userPreferences.updateTranscriptFontRatio(ratio)
         }

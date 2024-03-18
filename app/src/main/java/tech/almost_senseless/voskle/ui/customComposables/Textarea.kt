@@ -78,7 +78,7 @@ fun Textarea(
                 }
             }
             .then(modifier),
-        textStyle = LocalTextStyle.current.copy(fontSize = settings.transcriptFontRatio.em),
+        textStyle = LocalTextStyle.current.copy(fontSize = settings.transcriptFontRatio),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(
             onDone = {

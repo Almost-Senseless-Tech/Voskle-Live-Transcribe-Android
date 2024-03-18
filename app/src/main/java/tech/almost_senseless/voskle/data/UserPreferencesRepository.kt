@@ -1,6 +1,8 @@
 package tech.almost_senseless.voskle.data
 
 import android.util.Log
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.sp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -15,13 +17,22 @@ import java.io.IOException
 
 private const val TAG = "PreferencesRepo"
 
+public val FontSizeMap: Map<Int, TextUnit> = mapOf(
+    1 to 12.sp,
+    2 to 16.sp,
+    3 to 24.sp,
+    4 to 36.sp
+)
+
 data class UserPreferences(
     val language: Languages = Languages.ENGLISH_US,
-    val transcriptFontRatio: Float = 3f,
+    val transcriptFontRatio: TextUnit = 16.sp,
     val autoscroll: Boolean = true,
     val stopRecordingOnFocusLoss: Boolean = true,
     val generateSpeakerLabels: Boolean = false
 )
+
+
 
 class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
     private object PreferencesKeys {
@@ -51,9 +62,9 @@ class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
         }
     }
 
-    suspend fun updateTranscriptFontRatio(transcriptFontRatio: Float) {
+    suspend fun updateTranscriptFontRatio(transcriptFontRatio: TextUnit) {
         dataStore.edit { preferences ->
-            preferences[PreferencesKeys.transcriptionFontRatio] = transcriptFontRatio
+            preferences[PreferencesKeys.transcriptionFontRatio] = FontSizeMap.entries.find { it.value == transcriptFontRatio }?.key?.toFloat() ?: 2.0f
         }
     }
 
@@ -79,7 +90,7 @@ class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
         val language = Languages.valueOf(
             preferences[PreferencesKeys.language] ?: Languages.ENGLISH_US.name
         )
-        val transcriptFontRatio = preferences[PreferencesKeys.transcriptionFontRatio] ?: 3f
+        val transcriptFontRatio: TextUnit = FontSizeMap[preferences[PreferencesKeys.transcriptionFontRatio]?.toInt()] ?: 16.sp
         val autoscroll = preferences[PreferencesKeys.autoscroll] ?: true
         val stopRecordingOnFocusLoss = preferences[PreferencesKeys.stopRecordingOnFocusLoss] ?: true
         val generateSpeakerLabels = preferences[PreferencesKeys.generateSpeakerLabels] ?: false

@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import okhttp3.Call
 import okhttp3.Callback
@@ -45,6 +46,7 @@ import tech.almost_senseless.voskle.OSSLicensesActivity
 import tech.almost_senseless.voskle.R
 import tech.almost_senseless.voskle.VLTAction
 import tech.almost_senseless.voskle.VLTState
+import tech.almost_senseless.voskle.data.FontSizeMap
 import tech.almost_senseless.voskle.data.UserPreferences
 import tech.almost_senseless.voskle.util.ObservableInputStream
 import tech.almost_senseless.voskle.util.UnzipUtils
@@ -244,7 +246,7 @@ fun FontRatioRadioButtons(
     settings: UserPreferences,
     onAction: (VLTAction) -> Unit
 ) {
-    val radioOptions = listOf(3f, 4f, 5f, 6f, 7f)
+    val radioOptions = FontSizeMap.values.toList()//listOf(12.sp, 16.sp, 24.sp, 36.sp, 48.sp)
     Column(
         Modifier
             .selectableGroup()
@@ -271,8 +273,8 @@ fun FontRatioRadioButtons(
                     onClick = null // null recommended for accessibility with screen readers
                 )
                 Text(
-                    text = "${(value*100).toInt()} %",
-                    fontSize = value.em
+                    text = "${(value.value).toInt()} sp",
+                    fontSize = value
                 )
             }
         }
