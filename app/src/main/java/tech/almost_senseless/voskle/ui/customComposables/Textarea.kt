@@ -75,7 +75,7 @@ fun Textarea(
                 }
             }
             .then(modifier),
-        textStyle = LocalTextStyle.current.copy(fontSize = settings.fontSize.size),
+        textStyle = LocalTextStyle.current.copy(fontSize = settings.fontSize.size, lineHeight = settings.fontSize.lineHeight),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(
             onDone = {

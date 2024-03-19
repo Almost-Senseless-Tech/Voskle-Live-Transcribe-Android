@@ -16,11 +16,11 @@ import java.io.IOException
 
 private const val TAG = "PreferencesRepo"
 
-enum class FontSizes(val size: TextUnit) {
-    SMALL(12.sp),
-    MEDIUM(16.sp),
-    LARGE(24.sp),
-    LARGEST(36.sp)
+enum class FontSizes(val size: TextUnit, val lineHeight: TextUnit) {
+    SMALL(12.sp, 18.sp),
+    MEDIUM(16.sp, 24.sp),
+    LARGE(24.sp, 36.sp),
+    LARGEST(36.sp, 54.sp)
 }
 
 data class UserPreferences(
