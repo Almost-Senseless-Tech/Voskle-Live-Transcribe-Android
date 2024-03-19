@@ -1,5 +1,7 @@
 package tech.almost_senseless.voskle
 
+import androidx.compose.ui.unit.TextUnit
+import tech.almost_senseless.voskle.data.FontSizes
 import tech.almost_senseless.voskle.data.Languages
 import tech.almost_senseless.voskle.vosklib.VoskHub
 
@@ -13,7 +15,7 @@ sealed class VLTAction{
     data class ShowSettingsDialog(val display: Boolean): VLTAction()
     data class ShowPermissionsDialog(val display: Boolean): VLTAction()
     object ClearTranscript: VLTAction()
-    data class SetTranscriptFontRatio(val ratio: Float): VLTAction()
+    data class SetTranscriptFontSize(val size: FontSizes): VLTAction()
     data class ShowDownloadConfirmation(val display: Boolean): VLTAction()
     data class DownloadModel(val downloadFunction: (VLTViewModel, String) -> Unit, val modelPath: String): VLTAction()
     data class ShowDownloadSuccess(val display: Boolean): VLTAction()

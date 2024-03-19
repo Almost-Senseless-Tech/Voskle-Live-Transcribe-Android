@@ -53,4 +53,8 @@
     <string name="unknown_speaker">Unbekannt:</string>
     <string name="speaker">Person %1$s:</string>
     <string name="download_speaker_model">Modell für Sprechererkkennung herunterladen</string>
+    <string name="SMALL">Klein</string>
+    <string name="MEDIUM">Mittel</string>
+    <string name="LARGE">Groß</string>
+    <string name="LARGEST">Am größten</string>
 </resources>

@@ -8,7 +8,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -23,13 +22,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import tech.almost_senseless.voskle.R
 import tech.almost_senseless.voskle.VLTAction
 import tech.almost_senseless.voskle.VLTState
 import tech.almost_senseless.voskle.data.UserPreferences
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Textarea(
     settings: UserPreferences,
@@ -78,7 +75,7 @@ fun Textarea(
                 }
             }
             .then(modifier),
-        textStyle = LocalTextStyle.current.copy(fontSize = settings.transcriptFontRatio.em),
+        textStyle = LocalTextStyle.current.copy(fontSize = settings.fontSize.size),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(
             onDone = {

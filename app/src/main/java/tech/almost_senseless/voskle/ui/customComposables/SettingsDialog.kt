@@ -1,5 +1,6 @@
 package tech.almost_senseless.voskle.ui.customComposables
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
@@ -45,6 +46,7 @@ import tech.almost_senseless.voskle.OSSLicensesActivity
 import tech.almost_senseless.voskle.R
 import tech.almost_senseless.voskle.VLTAction
 import tech.almost_senseless.voskle.VLTState
+import tech.almost_senseless.voskle.data.FontSizes
 import tech.almost_senseless.voskle.data.UserPreferences
 import tech.almost_senseless.voskle.util.ObservableInputStream
 import tech.almost_senseless.voskle.util.UnzipUtils
@@ -102,7 +104,7 @@ fun SettingsDialog(
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Column {
                             Text(text = stringResource(id = R.string.transcript_font_size))
-                            FontRatioRadioButtons(settings = settings, onAction = onAction)
+                            FontSizeRadioButtons(settings = settings, onAction = onAction)
                         }
                     }
                 }
@@ -239,12 +241,12 @@ fun SettingsDialog(
     }
 }
 
+@SuppressLint("DiscouragedApi")
 @Composable
-fun FontRatioRadioButtons(
+fun FontSizeRadioButtons(
     settings: UserPreferences,
     onAction: (VLTAction) -> Unit
 ) {
-    val radioOptions = listOf(3f, 4f, 5f, 6f, 7f)
     Column(
         Modifier
             .selectableGroup()
@@ -253,26 +255,33 @@ fun FontRatioRadioButtons(
                     .padding(horizontal = 5.dp)
             )
     ) {
-        radioOptions.forEach { value ->
+        FontSizes.values().forEach { fontSize ->
             Row(
                 Modifier
                     .fillMaxWidth()
                     .height(56.dp)
                     .selectable(
-                        selected = (value == settings.transcriptFontRatio),
-                        onClick = { onAction(VLTAction.SetTranscriptFontRatio(value)) },
+                        selected = (fontSize == settings.fontSize),
+                        onClick = { onAction(VLTAction.SetTranscriptFontSize(fontSize)) },
                         role = Role.RadioButton
                     )
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
-                    selected = (value == settings.transcriptFontRatio),
+                    selected = (fontSize == settings.fontSize),
                     onClick = null // null recommended for accessibility with screen readers
                 )
+
+                // We could technically use a mapper function to return the correct string resource
+                // but here it's done dynamically for now.
+                val context = LocalContext.current
+                val fontSizeName = context.getString(context.resources.getIdentifier(
+                    fontSize.name, "string", context.packageName
+                ))
                 Text(
-                    text = "${(value*100).toInt()} %",
-                    fontSize = value.em
+                    text = fontSizeName,
+                    fontSize = fontSize.size
                 )
             }
         }

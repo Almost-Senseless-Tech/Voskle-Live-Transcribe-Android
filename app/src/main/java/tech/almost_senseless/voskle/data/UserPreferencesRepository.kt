@@ -1,12 +1,13 @@
 package tech.almost_senseless.voskle.data
 
 import android.util.Log
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.sp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -15,9 +16,16 @@ import java.io.IOException
 
 private const val TAG = "PreferencesRepo"
 
+enum class FontSizes(val size: TextUnit) {
+    SMALL(12.sp),
+    MEDIUM(16.sp),
+    LARGE(24.sp),
+    LARGEST(36.sp)
+}
+
 data class UserPreferences(
     val language: Languages = Languages.ENGLISH_US,
-    val transcriptFontRatio: Float = 3f,
+    val fontSize: FontSizes = FontSizes.MEDIUM,
     val autoscroll: Boolean = true,
     val stopRecordingOnFocusLoss: Boolean = true,
     val generateSpeakerLabels: Boolean = false
@@ -26,7 +34,7 @@ data class UserPreferences(
 class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
     private object PreferencesKeys {
         val language = stringPreferencesKey("language")
-        val transcriptionFontRatio = floatPreferencesKey("transcription_font_ratio")
+        val transcriptFontSize = stringPreferencesKey("transcript_font_size")
         val autoscroll = booleanPreferencesKey("autoscroll")
         val stopRecordingOnFocusLoss = booleanPreferencesKey("stopRecordingOnFocusLoss")
         val generateSpeakerLabels = booleanPreferencesKey("generateSpeakerLabels")
@@ -51,9 +59,9 @@ class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
         }
     }
 
-    suspend fun updateTranscriptFontRatio(transcriptFontRatio: Float) {
+    suspend fun updateTranscriptFontSize(transcriptFontSize: FontSizes) {
         dataStore.edit { preferences ->
-            preferences[PreferencesKeys.transcriptionFontRatio] = transcriptFontRatio
+            preferences[PreferencesKeys.transcriptFontSize] = transcriptFontSize.name
         }
     }
 
@@ -79,10 +87,12 @@ class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
         val language = Languages.valueOf(
             preferences[PreferencesKeys.language] ?: Languages.ENGLISH_US.name
         )
-        val transcriptFontRatio = preferences[PreferencesKeys.transcriptionFontRatio] ?: 3f
+        val transcriptFontSize = FontSizes.valueOf(
+            preferences[PreferencesKeys.transcriptFontSize] ?: FontSizes.MEDIUM.name
+        )
         val autoscroll = preferences[PreferencesKeys.autoscroll] ?: true
         val stopRecordingOnFocusLoss = preferences[PreferencesKeys.stopRecordingOnFocusLoss] ?: true
         val generateSpeakerLabels = preferences[PreferencesKeys.generateSpeakerLabels] ?: false
-return UserPreferences(language, transcriptFontRatio, autoscroll, stopRecordingOnFocusLoss, generateSpeakerLabels)
+return UserPreferences(language, transcriptFontSize, autoscroll, stopRecordingOnFocusLoss, generateSpeakerLabels)
     }
 }

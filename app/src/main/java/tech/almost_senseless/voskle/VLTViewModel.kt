@@ -7,10 +7,12 @@ package tech.almost_senseless.voskle
  import androidx.compose.runtime.setValue
  import androidx.compose.ui.text.TextRange
  import androidx.compose.ui.text.input.TextFieldValue
+ import androidx.compose.ui.unit.TextUnit
  import androidx.lifecycle.ViewModel
  import androidx.lifecycle.ViewModelProvider
  import androidx.lifecycle.viewModelScope
  import kotlinx.coroutines.launch
+ import tech.almost_senseless.voskle.data.FontSizes
  import tech.almost_senseless.voskle.data.Languages
  import tech.almost_senseless.voskle.data.UserPreferencesRepository
  import tech.almost_senseless.voskle.vosklib.VoskHub
@@ -38,7 +40,7 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
             is VLTAction.ClearTranscript -> clearTranscript()
             is VLTAction.ShowSettingsDialog -> showSettingsDialog(action.display)
             is VLTAction.ShowPermissionsDialog -> showPermissionsDialog(action.display)
-            is VLTAction.SetTranscriptFontRatio -> setTranscriptFontRatio(action.ratio)
+            is VLTAction.SetTranscriptFontSize -> setTranscriptFontSize(action.size)
             is VLTAction.ShowDownloadConfirmation -> displayDownloadConfirmation(action.display)
             is VLTAction.DownloadModel -> downloadModel(action.downloadFunction, action.modelPath)
             is VLTAction.ShowDownloadSuccess -> displayDownloadSuccess(action.display)
@@ -147,9 +149,9 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
         downloadFunction(this, modelPath)
     }
 
-    private fun setTranscriptFontRatio(ratio: Float) {
+    private fun setTranscriptFontSize(size: FontSizes) {
         viewModelScope.launch {
-            userPreferences.updateTranscriptFontRatio(ratio)
+            userPreferences.updateTranscriptFontSize(size)
         }
     }
 
