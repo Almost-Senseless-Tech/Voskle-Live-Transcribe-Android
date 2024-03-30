@@ -252,7 +252,7 @@ fun FontSizeRadioButtons(
             .selectableGroup()
             .then(
                 Modifier
-                    .padding(horizontal = 5.dp)
+                    .padding(5.dp)
             )
     ) {
         FontSizes.values().forEach { fontSize ->
