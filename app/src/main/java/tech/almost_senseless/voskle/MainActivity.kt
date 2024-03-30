@@ -35,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -50,6 +49,7 @@ import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import tech.almost_senseless.voskle.data.Languages
 import tech.almost_senseless.voskle.data.UserPreferences
 import tech.almost_senseless.voskle.data.UserPreferencesRepository
 import tech.almost_senseless.voskle.ui.customComposables.ConnectionErrorDialog
@@ -81,6 +81,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var viewModel: VLTViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Languages.initialize(applicationContext)
 
         setContent {
             VoskleLiveTranscribeTheme(darkTheme = isSystemInDarkTheme(), dynamicColor = true) {

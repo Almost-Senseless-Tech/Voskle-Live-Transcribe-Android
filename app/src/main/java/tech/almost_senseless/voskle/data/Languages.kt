@@ -1,30 +1,42 @@
 package tech.almost_senseless.voskle.data
 
-enum class Languages(val langName: String, val modelPath: String) {
-    ARABIC("اَلْعَرَبِيَّةُ", "vosk-model-ar-mgb2-0.4"),
-    BRETON("Brezhoneg", "vosk-model-br-0.7"),
-    CATALAN("català", "vosk-model-small-ca-0.4"),
-    CHINESE("標準漢語", "vosk-model-small-cn-0.22"),
-    CZECH("čeština", "vosk-model-small-cs-0.4-rhasspy"),
-    GERMAN("Deutsch", "vosk-model-small-de-0.15"),
-    ENGLISH_IN("English (India)", "vosk-model-small-en-in-0.4"),
-    ENGLISH_US("English (United states)", "vosk-model-small-en-us-0.15"),
-    SPANISH("Español", "vosk-model-small-es-0.42"),
-    PERSIAN("فارسی ", "vosk-model-small-fa-0.4"),
-    FRENCH("Français", "vosk-model-small-fr-0.22"),
-    GUJARATI("ગુજરાતી", "vosk-model-small-gu-0.42"),
-    ITALIAN("Italiano", "vosk-model-small-it-0.22"),
-    KOREAN("한국어", "vosk-model-small-ko-0.22"),
-    HINDI("हिन्दी", "vosk-model-small-hi-0.22"),
-    POLISH("język polski", "vosk-model-small-pl-0.22"),
-    KAZAKH("қазақша", "vosk-model-small-kz-0.15"),
-    DUTCH("Nederlands", "vosk-model-small-nl-0.22"),
-    JAPANESE("日本語", "vosk-model-small-ja-0.22"),
-    UZBEK("Oʻzbekcha", "vosk-model-small-uz-0.22"),
-    PORTUGUESE_BR("Português (Brasil)", "vosk-model-small-pt-0.3"),
-    RUSSIAN("Русский", "vosk-model-small-ru-0.22"),
-    SWEDISH("svenska", "vosk-model-small-sv-rhasspy-0.15"),
-    VIETNAMESE("tiếng Việt", "vosk-model-small-vn-0.4"),
-    TURKISH("Türkçe", "vosk-model-small-tr-0.3"),
-    UKRAINIAN("українська мова", "vosk-model-small-uk-v3-nano")
+import android.content.Context
+import tech.almost_senseless.voskle.R
+
+enum class Languages(val id: Int, val modelPath: String) {
+    ARABIC(R.string.lang_ar, "vosk-model-ar-mgb2-0.4"),
+    BRETON(R.string.lang_br, "vosk-model-br-0.7"),
+    CATALAN(R.string.lang_ca, "vosk-model-small-ca-0.4"),
+    CHINESE(R.string.lang_cn, "vosk-model-small-cn-0.22"),
+    CZECH(R.string.lang_cs, "vosk-model-small-cs-0.4-rhasspy"),
+    GERMAN(R.string.lang_de, "vosk-model-small-de-0.15"),
+    ENGLISH_IN(R.string.lang_en_in, "vosk-model-small-en-in-0.4"),
+    ENGLISH_US(R.string.lang_en_us, "vosk-model-small-en-us-0.15"),
+    SPANISH(R.string.lang_es, "vosk-model-small-es-0.42"),
+    PERSIAN(R.string.lang_fa, "vosk-model-small-fa-0.4"),
+    FRENCH(R.string.lang_fr, "vosk-model-small-fr-0.22"),
+    GUJARATI(R.string.lang_gu, "vosk-model-small-gu-0.42"),
+    HINDI(R.string.lang_hi, "vosk-model-small-hi-0.22"),
+    ITALIAN(R.string.lang_it, "vosk-model-small-it-0.22"),
+    JAPANESE(R.string.lang_ja, "vosk-model-small-ja-0.22"),
+    KOREAN(R.string.lang_ko, "vosk-model-small-ko-0.22"),
+    KAZAKH(R.string.lang_kz, "vosk-model-small-kz-0.15"),
+    POLISH(R.string.lang_pl, "vosk-model-small-pl-0.22"),
+    PORTUGUESE_BR(R.string.lang_pt, "vosk-model-small-pt-0.3"),
+    DUTCH(R.string.lang_nl, "vosk-model-small-nl-0.22"),
+    RUSSIAN(R.string.lang_ru, "vosk-model-small-ru-0.22"),
+    SWEDISH(R.string.lang_sv, "vosk-model-small-sv-rhasspy-0.15"),
+    TURKISH(R.string.lang_tr, "vosk-model-small-tr-0.3"),
+    UKRAINIAN(R.string.lang_uk, "vosk-model-small-uk-v3-nano"),
+    UZBEK(R.string.lang_uz, "vosk-model-small-uz-0.22"),
+    VIETNAMESE(R.string.lang_vn, "vosk-model-small-vn-0.4");
+
+    lateinit var langName: String
+        private set
+
+    companion object {
+        fun initialize(context: Context) {
+            for (value in Languages.values()) value.langName = context.getString(value.id)
+        }
+    }
 }

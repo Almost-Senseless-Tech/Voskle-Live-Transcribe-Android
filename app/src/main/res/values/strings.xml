@@ -57,4 +57,31 @@
     <string name="MEDIUM">Medium</string>
     <string name="LARGE">Large</string>
     <string name="LARGEST">Largest</string>
+    <!-- Language names -->
+    <string name="lang_ar">Arabic</string>
+    <string name="lang_br">Breton</string>
+    <string name="lang_ca">Catalan</string>
+    <string name="lang_cn">Chinese</string>
+    <string name="lang_cs">Czech</string>
+    <string name="lang_de">German</string>
+    <string name="lang_en_in">Indian English</string>
+    <string name="lang_en_us">American English</string>
+    <string name="lang_es">Spanish</string>
+    <string name="lang_fa">Persian</string>
+    <string name="lang_fr">French</string>
+    <string name="lang_gu">Gujarati</string>
+    <string name="lang_hi">Hindi</string>
+    <string name="lang_it">Italian</string>
+    <string name="lang_ja">Japanese</string>
+    <string name="lang_ko">Korean</string>
+    <string name="lang_kz">Kazakh</string>
+    <string name="lang_nl">Dutch</string>
+    <string name="lang_pl">Polish</string>
+    <string name="lang_pt">Portuguese</string>
+    <string name="lang_ru">Russian</string>
+    <string name="lang_sv">Swedish</string>
+    <string name="lang_tr">Turkish</string>
+    <string name="lang_uk">Ukrainian</string>
+    <string name="lang_uz">Uzbek</string>
+    <string name="lang_vn">Vietnamese</string>
 </resources>

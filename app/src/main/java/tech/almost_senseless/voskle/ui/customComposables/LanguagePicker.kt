@@ -1,6 +1,5 @@
 package tech.almost_senseless.voskle.ui.customComposables
 
-import androidx.compose.foundation.layout.*
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,7 +54,7 @@ fun LanguagePicker(
             onDismissRequest = {
                 viewModel.onAction(VLTAction.SetLanguagePickerState(false))
             }) {
-            Languages.values().forEach {
+            Languages.values().sortedBy { it.langName }.forEach {
                 DropdownMenuItem(text = {
                                         Text(text = it.langName)
                 }, onClick = {
