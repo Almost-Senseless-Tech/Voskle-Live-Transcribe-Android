@@ -14,6 +14,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
@@ -26,13 +27,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.UrlAnnotation
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.window.Dialog
 import okhttp3.Call
@@ -205,6 +213,11 @@ fun SettingsDialog(
                 }
                 item {
                     Row(modifier = Modifier.fillMaxWidth()) {
+                        GetHelpLink()
+                    }
+                }
+                item {
+                    Row(modifier = Modifier.fillMaxWidth()) {
                         Button(onClick = { contactUs() }) {
                             Text(text = stringResource(id = R.string.contact_us))
                         }
@@ -337,4 +350,52 @@ private fun downloadSpeakerModel(context: Context, onAction: (VLTAction) -> Unit
             }
         }
     })
+}
+
+@OptIn(ExperimentalTextApi::class)
+@Composable
+fun GetHelpLink() {
+    val context = LocalContext.current
+    val annotatedLinkText = buildAnnotatedString {
+        val getHelpLink = context.getString(R.string.get_help_link)
+        val helpText = context.getString(R.string.get_help, getHelpLink)
+        val linkStart = helpText.indexOf(getHelpLink)
+        val linkEnd = linkStart + getHelpLink.length
+        append(helpText)
+
+        addStyle(
+            style = SpanStyle(
+                color = Color.Blue,
+                fontSize = 18.sp,
+                textDecoration = TextDecoration.Underline
+            ), start = linkStart, end = linkEnd
+        )
+
+        addUrlAnnotation(
+            urlAnnotation = UrlAnnotation(getHelpLink),
+            start = linkStart,
+            end = linkEnd,
+        )
+
+        addStringAnnotation(
+            tag = "URL",
+            annotation = getHelpLink,
+            start = linkStart,
+            end = linkEnd,
+        )
+    }
+
+    val uriHandler = LocalUriHandler.current
+    ClickableText(
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth(),
+        text = annotatedLinkText,
+        onClick = { offset ->
+            annotatedLinkText.getStringAnnotations("URL", offset, offset)
+                .firstOrNull()?.let { stringAnnotation ->
+                    uriHandler.openUri(stringAnnotation.item)
+                }
+        }
+    )
 }
