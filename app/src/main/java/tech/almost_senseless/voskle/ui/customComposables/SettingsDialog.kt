@@ -211,11 +211,13 @@ fun SettingsDialog(
                         )
                     }
                 }
+                item { MyDivider() }
                 item {
                     Row(modifier = Modifier.fillMaxWidth()) {
                         GetHelpLink()
                     }
                 }
+                item { MyDivider() }
                 item {
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Button(onClick = { contactUs() }) {
@@ -223,6 +225,7 @@ fun SettingsDialog(
                         }
                     }
                 }
+                item { MyDivider() }
                 item {
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Button(onClick = {
@@ -231,6 +234,12 @@ fun SettingsDialog(
                         }) {
                             Text(text = stringResource(id = R.string.view_oss_licenses))
                         }
+                    }
+                }
+                item { MyDivider() }
+                item {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        PrivacyPolicyLink()
                     }
                 }
                 item { MyDivider() }
@@ -380,6 +389,55 @@ fun GetHelpLink() {
         addStringAnnotation(
             tag = "URL",
             annotation = getHelpLink,
+            start = linkStart,
+            end = linkEnd,
+        )
+    }
+
+    val uriHandler = LocalUriHandler.current
+    ClickableText(
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth(),
+        text = annotatedLinkText,
+        onClick = { offset ->
+            annotatedLinkText.getStringAnnotations("URL", offset, offset)
+                .firstOrNull()?.let { stringAnnotation ->
+                    uriHandler.openUri(stringAnnotation.item)
+                }
+        }
+    )
+}
+
+
+@OptIn(ExperimentalTextApi::class)
+@Composable
+fun PrivacyPolicyLink() {
+    val context = LocalContext.current
+    val annotatedLinkText = buildAnnotatedString {
+        val privacyPolicyLinkText = context.getString(R.string.privacy_policy)
+        val privacyPolicyLink = context.getString(R.string.privacy_policy_url)
+        val linkStart = 0
+        val linkEnd = privacyPolicyLinkText.length - 1
+        append(privacyPolicyLinkText)
+
+        addStyle(
+            style = SpanStyle(
+                color = Color.Blue,
+                fontSize = 18.sp,
+                textDecoration = TextDecoration.Underline
+            ), start = linkStart, end = linkEnd
+        )
+
+        addUrlAnnotation(
+            urlAnnotation = UrlAnnotation(privacyPolicyLink),
+            start = linkStart,
+            end = linkEnd,
+        )
+
+        addStringAnnotation(
+            tag = "URL",
+            annotation = privacyPolicyLink,
             start = linkStart,
             end = linkEnd,
         )

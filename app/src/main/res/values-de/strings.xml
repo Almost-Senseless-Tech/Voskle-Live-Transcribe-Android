@@ -87,4 +87,6 @@
     <string name="lang_uk">Ukrainisch</string>
     <string name="lang_uz">Usbekisch</string>
     <string name="lang_vn">Vietnamesisch</string>
+    <string name="privacy_policy">Datenschutzerklärung</string>
+    <string name="privacy_policy_url">https://vlt.almost-senseless.tech/de/privacy-policy/</string>
 </resources>
