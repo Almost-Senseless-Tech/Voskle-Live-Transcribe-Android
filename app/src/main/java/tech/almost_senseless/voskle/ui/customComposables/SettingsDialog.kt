@@ -307,7 +307,7 @@ fun MyDivider(){
 }
 
 private fun downloadSpeakerModel(context: Context, onAction: (VLTAction) -> Unit) {
-    val url = "https://alphacephei.com/vosk/models/$SPEAKER_MODEL_PATH.zip"
+    val url = "https://models.vlt.almost-senseless.tech/$SPEAKER_MODEL_PATH.zip"
     val request = Request.Builder()
         .url(url)
         .build()

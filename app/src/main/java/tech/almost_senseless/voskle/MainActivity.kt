@@ -607,7 +607,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun downloadModel(viewModel: VLTViewModel, modelPath: String) {
-        val url = "https://alphacephei.com/vosk/models/$modelPath.zip"
+        val url = "https://models.vlt.almost-senseless.tech/$modelPath.zip"
         val httpClient = OkHttpClient()
         val request = Request.Builder()
             .url(url)
