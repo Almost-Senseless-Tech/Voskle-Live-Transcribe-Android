@@ -36,7 +36,7 @@ fun Textarea(
 ) {
     val scrollState = rememberScrollState()
     LaunchedEffect(scrollState.maxValue) {
-        if (state.isRecording && settings.autoscroll) {
+        if ((state.isRecording || state.keyboardInput) && settings.autoscroll) {
             scrollState.animateScrollTo(scrollState.maxValue)
         }
     }
