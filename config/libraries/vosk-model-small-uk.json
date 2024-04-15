@@ -8,7 +8,7 @@
     ],
     "artifactVersion": "3",
    "description": "Nano model from Speech Recognition for Ukrainian",
-   "name": "vosk-model-small-uk-nano",
+   "name": "vosk-model-small-uk-small",
     "website": "https://github.com/egorsmkv/speech-recognition-uk",
     "licenses": [
        "Apache-2.0"

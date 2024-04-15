@@ -28,7 +28,7 @@ enum class Languages(val id: Int, val modelPath: String) {
     RUSSIAN(R.string.lang_ru, "vosk-model-small-ru-0.22"),
     SWEDISH(R.string.lang_sv, "vosk-model-small-sv-rhasspy-0.15"),
     TURKISH(R.string.lang_tr, "vosk-model-small-tr-0.3"),
-    UKRAINIAN(R.string.lang_uk, "vosk-model-small-uk-v3-nano"),
+    UKRAINIAN(R.string.lang_uk, "vosk-model-small-uk-v3-small"),
     UZBEK(R.string.lang_uz, "vosk-model-small-uz-0.22"),
     VIETNAMESE(R.string.lang_vn, "vosk-model-small-vn-0.4");
 
