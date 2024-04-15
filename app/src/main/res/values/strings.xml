@@ -32,14 +32,16 @@
     <string name="data_processing_failed_title">Data processing failed</string>
     <string name="data_processing_failed">Processing the downloaded model data failed.\n%1$sContact us if the problem persists.</string>
     <string name="model_error_title">Model error</string>
-    <string name="model_error">An error occured while working with the model.\n%1$sContact us if the problem persists.</string>
+    <string name="model_error">An error occurred while working with the model.\n%1$sContact us if the problem persists.</string>
     <string name="timeout_title">Transcription timed out</string>
     <string name="timeout">Transcribing took too long. Contact us if the problem persists.</string>
     <string name="version_info">App version: %1$s (%2$s)</string>
     <string name="autoscroll">Automatic scrolling</string>
-    <string name="autoscroll_description">If automatic scrolling is enabled, the latest line of the transcript will always stay visible. Turn this off if you preer scrolling manually.</string>
+    <string name="autoscroll_description">If automatic scrolling is enabled, the latest line of the transcript will always stay visible. Turn this off if you prefer scrolling manually.</string>
     <string name="copyright">Copyright © 2024 Leon Wollandt, Tim Böttcher</string>
     <string name="license">Licensed under the Apache license, version 2.0</string>
+    <string name="icon_attribution">App-icon in part provided by Image by Freepik: %1$s</string>
+    <string name="icon_link">https://www.freepik.com/free-vector/flat-exotic-birds-collection_1592517.htm#fromView=search&amp;page=1&amp;position=16&amp;uuid=1ce8413b-f9a9-45c2-be04-5d6f2cca8a9b</string>
     <string name="downloading_state">Downloading model...</string>
     <string name="unpacking_state">Processing model...</string>
     <string name="no_model_loaded_state">No model loaded.</string>

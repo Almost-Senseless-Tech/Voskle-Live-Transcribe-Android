@@ -3,6 +3,7 @@ package tech.almost_senseless.voskle.ui.customComposables
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -34,6 +36,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.UrlAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -130,7 +133,7 @@ fun SettingsDialog(
                         ),
                         verticalAlignment = Alignment.CenterVertically) {
                         Switch(checked = settings.autoscroll, null)
-                        Text(text = stringResource(id = R.string.autoscroll))
+                        Text(text = stringResource(id = R.string.autoscroll), modifier = Modifier.padding(horizontal = 8.dp))
                     }
                     Row(modifier = Modifier
                         .fillMaxWidth()
@@ -153,7 +156,7 @@ fun SettingsDialog(
                         ),
                         verticalAlignment = Alignment.CenterVertically) {
                         Switch(checked = settings.stopRecordingOnFocusLoss, null)
-                        Text(text = stringResource(id = R.string.stop_recording_on_focus_loss))
+                        Text(text = stringResource(id = R.string.stop_recording_on_focus_loss), modifier = Modifier.padding(horizontal = 8.dp))
                     }
                 }
                 item { MyDivider() }
@@ -176,7 +179,7 @@ fun SettingsDialog(
                             onCheckedChange = null,
                             enabled = state.voskHubInstance?.isSpeakerModelAvailable() ?: false
                         )
-                        Text(text = stringResource(id = R.string.recognize_speakers))
+                        Text(text = stringResource(id = R.string.recognize_speakers), modifier = Modifier.padding(horizontal = 8.dp))
                     }
                     if (state.voskHubInstance?.isSpeakerModelAvailable() == false) {
                         Row(
@@ -201,6 +204,19 @@ fun SettingsDialog(
                 }
                 item { MyDivider() }
                 item {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        GetHelpLink()
+                    }
+                }
+                item {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Button(onClick = { contactUs() }) {
+                            Text(text = stringResource(id = R.string.contact_us))
+                        }
+                    }
+                }
+                item { Divider(color = MaterialTheme.colorScheme.outline, thickness = 3.dp, modifier = Modifier.padding(vertical = 4.dp)) }
+                item {
                     Row(modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
@@ -211,38 +227,15 @@ fun SettingsDialog(
                         )
                     }
                 }
+
                 item { MyDivider() }
-                item {
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        GetHelpLink()
-                    }
-                }
-                item { MyDivider() }
-                item {
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        Button(onClick = { contactUs() }) {
-                            Text(text = stringResource(id = R.string.contact_us))
-                        }
-                    }
-                }
-                item { MyDivider() }
-                item {
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        Button(onClick = {
-                            val intent = Intent(context, OSSLicensesActivity::class.java)
-                            context.startActivity(intent)
-                        }) {
-                            Text(text = stringResource(id = R.string.view_oss_licenses))
-                        }
-                    }
-                }
-                item { MyDivider() }
+
                 item {
                     Row(modifier = Modifier.fillMaxWidth()) {
                         PrivacyPolicyLink()
                     }
                 }
-                item { MyDivider() }
+
                 item {
                     Row(modifier = Modifier.fillMaxWidth()) {
                         val appVersion = BuildConfig.VERSION_NAME
@@ -256,6 +249,20 @@ fun SettingsDialog(
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Text(text = stringResource(id = R.string.license))
                     }
+                }
+                item {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Button(onClick = {
+                            val intent = Intent(context, OSSLicensesActivity::class.java)
+                            context.startActivity(intent)
+                        }) {
+                            Text(text = stringResource(id = R.string.view_oss_licenses))
+                        }
+                    }
+                }
+                item { MyDivider() }
+                item {
+                    IconAttributionLink(modifier = Modifier.fillMaxWidth())
                 }
 
             }
@@ -274,7 +281,7 @@ fun FontSizeRadioButtons(
             .selectableGroup()
             .then(
                 Modifier
-                    .padding(5.dp)
+                    .padding(vertical = 5.dp)
             )
     ) {
         FontSizes.values().forEach { fontSize ->
@@ -286,8 +293,7 @@ fun FontSizeRadioButtons(
                         selected = (fontSize == settings.fontSize),
                         onClick = { onAction(VLTAction.SetTranscriptFontSize(fontSize)) },
                         role = Role.RadioButton
-                    )
-                    .padding(horizontal = 16.dp),
+                    ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
@@ -303,7 +309,8 @@ fun FontSizeRadioButtons(
                 ))
                 Text(
                     text = fontSizeName,
-                    fontSize = fontSize.size
+                    fontSize = fontSize.size,
+                    modifier = Modifier.padding(horizontal = 8.dp)
                 )
             }
         }
@@ -312,7 +319,7 @@ fun FontSizeRadioButtons(
 
 @Composable
 fun MyDivider(){
-    Divider(color = Color(0xFF2d2d2d), thickness = 1.dp, modifier = Modifier.padding(vertical = 4.dp))
+    Divider(color = MaterialTheme.colorScheme.outline, thickness = 1.dp, modifier = Modifier.padding(vertical = 4.dp))
 }
 
 private fun downloadSpeakerModel(context: Context, onAction: (VLTAction) -> Unit) {
@@ -374,7 +381,7 @@ fun GetHelpLink() {
 
         addStyle(
             style = SpanStyle(
-                color = Color.Blue,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 18.sp,
                 textDecoration = TextDecoration.Underline
             ), start = linkStart, end = linkEnd
@@ -397,7 +404,7 @@ fun GetHelpLink() {
     val uriHandler = LocalUriHandler.current
     ClickableText(
         modifier = Modifier
-            .padding(8.dp)
+            .padding(horizontal = 8.dp)
             .fillMaxWidth(),
         text = annotatedLinkText,
         onClick = { offset ->
@@ -405,7 +412,11 @@ fun GetHelpLink() {
                 .firstOrNull()?.let { stringAnnotation ->
                     uriHandler.openUri(stringAnnotation.item)
                 }
-        }
+        },
+        style = TextStyle(
+            color=MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize=MaterialTheme.typography.bodyLarge.fontSize
+        )
     )
 }
 
@@ -418,12 +429,12 @@ fun PrivacyPolicyLink() {
         val privacyPolicyLinkText = context.getString(R.string.privacy_policy)
         val privacyPolicyLink = context.getString(R.string.privacy_policy_url)
         val linkStart = 0
-        val linkEnd = privacyPolicyLinkText.length - 1
+        val linkEnd = privacyPolicyLinkText.length
         append(privacyPolicyLinkText)
 
         addStyle(
             style = SpanStyle(
-                color = Color.Blue,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 18.sp,
                 textDecoration = TextDecoration.Underline
             ), start = linkStart, end = linkEnd
@@ -446,7 +457,7 @@ fun PrivacyPolicyLink() {
     val uriHandler = LocalUriHandler.current
     ClickableText(
         modifier = Modifier
-            .padding(8.dp)
+            .padding(horizontal = 8.dp)
             .fillMaxWidth(),
         text = annotatedLinkText,
         onClick = { offset ->
@@ -454,6 +465,63 @@ fun PrivacyPolicyLink() {
                 .firstOrNull()?.let { stringAnnotation ->
                     uriHandler.openUri(stringAnnotation.item)
                 }
-        }
+        },
+        style = TextStyle(
+            color=MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize=MaterialTheme.typography.bodyLarge.fontSize
+        )
+    )
+}
+
+@OptIn(ExperimentalTextApi::class)
+@Composable
+fun IconAttributionLink(modifier: Modifier) {
+    val context = LocalContext.current
+    val annotatedLinkText = buildAnnotatedString {
+        val iconLink = context.getString(R.string.icon_link)
+        val helpText = context.getString(R.string.icon_attribution, iconLink)
+        val linkStart = helpText.indexOf(iconLink)
+        val linkEnd = linkStart + iconLink.length
+        append(helpText)
+
+        addStyle(
+            style = SpanStyle(
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 18.sp,
+                textDecoration = TextDecoration.Underline
+            ), start = linkStart, end = linkEnd
+        )
+
+        addUrlAnnotation(
+            urlAnnotation = UrlAnnotation(iconLink),
+            start = linkStart,
+            end = linkEnd,
+        )
+
+        addStringAnnotation(
+            tag = "URL",
+            annotation = iconLink,
+            start = linkStart,
+            end = linkEnd,
+        )
+    }
+
+    val uriHandler = LocalUriHandler.current
+    ClickableText(
+        modifier = Modifier
+            .padding(vertical = 8.dp)
+            .fillMaxWidth()
+            .then(modifier),
+        text = annotatedLinkText,
+        onClick = { offset ->
+            annotatedLinkText.getStringAnnotations("URL", offset, offset)
+                .firstOrNull()?.let { stringAnnotation ->
+                    uriHandler.openUri(stringAnnotation.item)
+                }
+        },
+        style = TextStyle(
+            color=MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize=MaterialTheme.typography.bodyLarge.fontSize
+        )
     )
 }

@@ -6,9 +6,9 @@ A simple, accessible and offline real-time transcription app.
 
 It's true that many apps are capable of transcribing speech to text; increasingly, even mobile operating systems offer options to recognize speech in the vicinity and transcribe it. In our experience, though, there usually are one or more of the following caveats:
 
-- The transcription only works if an internet conncetion exists,
+- The transcription only works if an internet connection exists,
 - The transcript's quality is too poor,
-- The app isn't accessible to the deafblind, i.e., not optimised for braille display users,
+- The app isn't accessible to the deaf-blind, i.e., not optimised for braille display users,
 - The user interface is too complicated due to supporting more features than plain transcription of speech,
 - Continuous transcribing isn't supported (e.g., pressing a button to restart transcribing is necessary),
 - Transcribing imposes a significant drain on the device's battery,

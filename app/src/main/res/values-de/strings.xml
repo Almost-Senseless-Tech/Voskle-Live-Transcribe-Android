@@ -40,6 +40,8 @@
     <string name="autoscroll_description">Wenn automatisches Weiterbewegen aktiviert ist, bleibt die neueste Zeile des Transkripts immer sichtbar, während transkribiert wird. Schalten Sie dies aus, wenn Sie den Text lieber selbst weiter bewegen möchten.</string>
     <string name="copyright">Copyright © 2024 Leon Wollandt, Tim Böttcher</string>
     <string name="license">Lizenziert unter der Apache Lizenz, Version 2.0</string>
+    <string name="icon_attribution">App-icon teilweise bereitgestellt durch Freepik: %1$s</string>
+    <string name="icon_link">https://www.freepik.com/free-vector/flat-exotic-birds-collection_1592517.htm#fromView=search&amp;page=1&amp;position=16&amp;uuid=1ce8413b-f9a9-45c2-be04-5d6f2cca8a9b</string>
     <string name="downloading_state">Lade Modell herunter...</string>
     <string name="unpacking_state">Verarbeite Modell...</string>
     <string name="no_model_loaded_state">Kein Modell geladen.</string>
