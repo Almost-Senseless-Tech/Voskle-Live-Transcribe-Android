@@ -58,6 +58,7 @@
     <string name="SMALL">Small</string>
     <string name="MEDIUM">Medium</string>
     <string name="LARGE">Large</string>
+    <string name="VERY_LARGE">Very large</string>
     <string name="LARGEST">Largest</string>
     <string name="get_help">Do you need help? Visit %1$s</string>
     <string name="get_help_link">https://vlt.almost-senseless.tech/</string>

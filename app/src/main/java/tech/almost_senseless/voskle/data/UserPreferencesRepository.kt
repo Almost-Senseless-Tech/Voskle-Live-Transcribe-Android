@@ -20,7 +20,8 @@ enum class FontSizes(val size: TextUnit, val lineHeight: TextUnit) {
     SMALL(12.sp, 18.sp),
     MEDIUM(16.sp, 24.sp),
     LARGE(24.sp, 36.sp),
-    LARGEST(36.sp, 54.sp)
+    VERY_LARGE(36.sp, 54.sp),
+    LARGEST(72.sp, 108.sp)
 }
 
 data class UserPreferences(
