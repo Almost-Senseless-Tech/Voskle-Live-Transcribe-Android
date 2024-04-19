@@ -92,4 +92,6 @@
     <string name="lang_vn">Vietnamesisch</string>
     <string name="privacy_policy">Datenschutzerklärung</string>
     <string name="privacy_policy_url">https://vlt.almost-senseless.tech/de/privacy-policy/</string>
+    <string name="high_contrast">Hoher Kontrast</string>
+    <string name="high_contrast_description">Wenn dies ausgewählt ist, werden im dunklen Modus besonders hohe Kontraste verwendet.</string>
 </resources>

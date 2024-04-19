@@ -29,7 +29,8 @@ data class UserPreferences(
     val fontSize: FontSizes = FontSizes.MEDIUM,
     val autoscroll: Boolean = true,
     val stopRecordingOnFocusLoss: Boolean = true,
-    val generateSpeakerLabels: Boolean = false
+    val generateSpeakerLabels: Boolean = false,
+    val highContrast: Boolean = true
 )
 
 class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
@@ -39,6 +40,7 @@ class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
         val autoscroll = booleanPreferencesKey("autoscroll")
         val stopRecordingOnFocusLoss = booleanPreferencesKey("stopRecordingOnFocusLoss")
         val generateSpeakerLabels = booleanPreferencesKey("generateSpeakerLabels")
+        val highContrast = booleanPreferencesKey("highContrast")
     }
 
     val userPreferencesFlow: Flow<UserPreferences> = dataStore.data
@@ -84,6 +86,12 @@ class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
         }
     }
 
+    suspend fun updateHighContrast(highContrast: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.highContrast] = highContrast
+        }
+    }
+
     private fun mapUserPreferences(preferences: Preferences): UserPreferences {
         val language = Languages.valueOf(
             preferences[PreferencesKeys.language] ?: Languages.ENGLISH_US.name
@@ -94,6 +102,7 @@ class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
         val autoscroll = preferences[PreferencesKeys.autoscroll] ?: true
         val stopRecordingOnFocusLoss = preferences[PreferencesKeys.stopRecordingOnFocusLoss] ?: true
         val generateSpeakerLabels = preferences[PreferencesKeys.generateSpeakerLabels] ?: false
-return UserPreferences(language, transcriptFontSize, autoscroll, stopRecordingOnFocusLoss, generateSpeakerLabels)
+        val highContrast = preferences[PreferencesKeys.highContrast] ?: true
+return UserPreferences(language, transcriptFontSize, autoscroll, stopRecordingOnFocusLoss, generateSpeakerLabels, highContrast)
     }
 }

@@ -2,22 +2,6 @@ package tech.almost_senseless.voskle.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
-
-
-val DarkGrey = Color(0xFF2E2E2E)
-val Aqua = Color(0xFF3399FF)
-val White = Color(0xFFFFFFFF)
-val Black = Color(0xFF000000)
-
-
-
 val md_theme_light_primary = Color(0xFF0060AB)
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)
 val md_theme_light_primaryContainer = Color(0xFFD3E3FF)
@@ -80,5 +64,36 @@ val md_theme_dark_surfaceTint = Color(0xFFA3C9FF)
 val md_theme_dark_outlineVariant = Color(0xFF43474E)
 val md_theme_dark_scrim = Color(0xFF000000)
 
+
+val md_theme_hc_primary = Color(0xFFFFFFFF)
+val md_theme_hc_onPrimary = Color(0xFF000000)
+val md_theme_hc_primaryContainer = Color(0xFFD2D2D2)
+val md_theme_hc_onPrimaryContainer = Color(0xFFFFFEFF)
+val md_theme_hc_secondary = Color(0xFFFFF70A)
+val md_theme_hc_onSecondary = Color(0xFF000000)
+val md_theme_hc_secondaryContainer = Color(0xFF3C4758)
+val md_theme_hc_onSecondaryContainer = Color(0xFFFFFEFF)
+val md_theme_hc_tertiary = Color(0xFFFFEB2A)
+val md_theme_hc_onTertiary = Color(0xFF1E2A56)
+val md_theme_hc_tertiaryContainer = Color(0xFF215D6E)
+val md_theme_hc_onTertiaryContainer = Color(0xFFFFFFA7)
+val md_theme_hc_error = Color(0xFFFFB4AB)
+val md_theme_hc_errorContainer = Color(0xFF93000A)
+val md_theme_hc_onError = Color(0xFF690005)
+val md_theme_hc_onErrorContainer = Color(0xFFFFDAD6)
+val md_theme_hc_background = Color(0xFF000000)
+val md_theme_hc_onBackground = Color(0xFFFFFFFF)
+val md_theme_hc_surface = Color(0xFF000000)
+val md_theme_hc_onSurface = Color(0xFFFFFFFF)
+val md_theme_hc_surfaceVariant = Color(0xFF1A1E1C)
+val md_theme_hc_onSurfaceVariant = Color(0xFFFFFEFF)
+val md_theme_hc_outline = Color(0xFF9BD0E1)
+val md_theme_hc_inverseOnSurface = Color(0xFF000000)
+val md_theme_hc_inverseSurface = Color(0xFFFFFFFF)
+val md_theme_hc_inversePrimary = Color(0xFF000000)
+val md_theme_hc_shadow = Color(0xFF000000)
+val md_theme_hc_surfaceTint = Color(0xFFFFFEFF)
+val md_theme_hc_outlineVariant = Color(0xFF1E2A56)
+val md_theme_hc_scrim = Color(0xFF000000)
 
 val seed = Color(0xFF3399FF)

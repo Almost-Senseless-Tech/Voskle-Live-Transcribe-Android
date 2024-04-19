@@ -15,36 +15,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Aqua, //Purple40,
-    secondary = DarkGrey, //PurpleGrey40,
-    tertiary = White, //Pink40,
-    background = DarkGrey,//PurpleGrey40
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey80,
-    tertiary = Black,//Pink80,
-    background = PurpleGrey80,
-    surface = Black,
-    onPrimary = Black,
-    onSecondary = Black,
-    onTertiary = Black,
-    onBackground = Black,
-    onSurface = Black
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
-)
-
 private val LightColors = lightColorScheme(
     primary = md_theme_light_primary,
     onPrimary = md_theme_light_onPrimary,
@@ -76,7 +46,6 @@ private val LightColors = lightColorScheme(
     outlineVariant = md_theme_light_outlineVariant,
     scrim = md_theme_light_scrim,
 )
-
 
 private val DarkColors = darkColorScheme(
     primary = md_theme_dark_primary,
@@ -110,20 +79,59 @@ private val DarkColors = darkColorScheme(
     scrim = md_theme_dark_scrim,
 )
 
+private val HighContrastColors = darkColorScheme(
+    primary = md_theme_hc_primary,
+    onPrimary = md_theme_hc_onPrimary,
+    primaryContainer = md_theme_hc_primaryContainer,
+    onPrimaryContainer = md_theme_hc_onPrimaryContainer,
+    secondary = md_theme_hc_secondary,
+    onSecondary = md_theme_hc_onSecondary,
+    secondaryContainer = md_theme_hc_secondaryContainer,
+    onSecondaryContainer = md_theme_hc_onSecondaryContainer,
+    tertiary = md_theme_hc_tertiary,
+    onTertiary = md_theme_hc_onTertiary,
+    tertiaryContainer = md_theme_hc_tertiaryContainer,
+    onTertiaryContainer = md_theme_hc_onTertiaryContainer,
+    error = md_theme_hc_error,
+    errorContainer = md_theme_hc_errorContainer,
+    onError = md_theme_hc_onError,
+    onErrorContainer = md_theme_hc_onErrorContainer,
+    background = md_theme_hc_background,
+    onBackground = md_theme_hc_onBackground,
+    surface = md_theme_hc_surface,
+    onSurface = md_theme_hc_onSurface,
+    surfaceVariant = md_theme_hc_surfaceVariant,
+    onSurfaceVariant = md_theme_hc_onSurfaceVariant,
+    outline = md_theme_hc_outline,
+    inverseOnSurface = md_theme_hc_inverseOnSurface,
+    inverseSurface = md_theme_hc_inverseSurface,
+    inversePrimary = md_theme_hc_inversePrimary,
+    surfaceTint = md_theme_hc_surfaceTint,
+    outlineVariant = md_theme_hc_outlineVariant,
+    scrim = md_theme_hc_scrim,
+)
+
 @Composable
 fun VoskleLiveTranscribeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    highContrast: Boolean,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !highContrast -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColors
+        darkTheme -> {
+            if (highContrast) {
+                HighContrastColors
+            } else {
+                DarkColors
+            }
+        }
         else -> LightColors
     }
     val view = LocalView.current

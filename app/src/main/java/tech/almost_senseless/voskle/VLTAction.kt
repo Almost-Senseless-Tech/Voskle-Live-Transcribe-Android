@@ -1,6 +1,5 @@
 package tech.almost_senseless.voskle
 
-import androidx.compose.ui.unit.TextUnit
 import tech.almost_senseless.voskle.data.FontSizes
 import tech.almost_senseless.voskle.data.Languages
 import tech.almost_senseless.voskle.vosklib.VoskHub
@@ -33,7 +32,28 @@ sealed class VLTAction{
     object MoveCursorLeft: VLTAction()
     object MoveCursorRight: VLTAction()
     data class ToggleGenerateSpeakerLabels(val generateSpeakerLabels: Boolean): VLTAction()
-    data class ProcessSpeakerInfo(val speakerFingerprint: DoubleArray?, val speakerDataLength: Int?): VLTAction()
+    data class ProcessSpeakerInfo(val speakerFingerprint: DoubleArray?, val speakerDataLength: Int?): VLTAction() {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as ProcessSpeakerInfo
+
+            if (speakerFingerprint != null) {
+                if (other.speakerFingerprint == null) return false
+                if (!speakerFingerprint.contentEquals(other.speakerFingerprint)) return false
+            } else if (other.speakerFingerprint != null) return false
+            return speakerDataLength == other.speakerDataLength
+        }
+
+        override fun hashCode(): Int {
+            var result = speakerFingerprint?.contentHashCode() ?: 0
+            result = 31 * result + (speakerDataLength ?: 0)
+            return result
+        }
+    }
+
     data class UpdateModelProcessingProgress(val progress: Float?): VLTAction()
     data class UpdateSpeakerModelProcessingProgress(val progress: Float?): VLTAction()
+    data class ToggleHighContrast(val highContrast: Boolean): VLTAction()
 }

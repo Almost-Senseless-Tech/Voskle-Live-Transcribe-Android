@@ -72,8 +72,8 @@ import kotlin.io.path.createTempFile
 
 
 private const val TAG = "MainActivity"
-private const val PREFERENCES_DATASTORE = "preferences"
-private val Context.dataStore by preferencesDataStore(
+const val PREFERENCES_DATASTORE = "preferences"
+val Context.dataStore by preferencesDataStore(
     name = PREFERENCES_DATASTORE
 )
 
@@ -84,16 +84,16 @@ class MainActivity : ComponentActivity() {
         Languages.initialize(applicationContext)
 
         setContent {
-            VoskleLiveTranscribeTheme(darkTheme = isSystemInDarkTheme(), dynamicColor = true) {
-                viewModel = viewModel(
-                    factory = VLTViewModelFactory(
-                        UserPreferencesRepository(
-                            applicationContext.dataStore
-                        ), applicationContext
-                    )
+            viewModel = viewModel(
+                factory = VLTViewModelFactory(
+                    UserPreferencesRepository(
+                        applicationContext.dataStore
+                    ), applicationContext
                 )
-                val state = viewModel.state
-                val settings = viewModel.settings.collectAsState(initial = UserPreferences())
+            )
+            val state = viewModel.state
+            val settings = viewModel.settings.collectAsState(initial = UserPreferences())
+            VoskleLiveTranscribeTheme(darkTheme = isSystemInDarkTheme(), dynamicColor = true, highContrast = settings.value.highContrast) {
                 val recordButtonFocusRequester = FocusRequester()
                 val textareaFocusRequester = FocusRequester()
 

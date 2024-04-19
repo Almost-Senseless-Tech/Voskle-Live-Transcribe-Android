@@ -98,7 +98,7 @@ fun SettingsDialog(
                 verticalArrangement =  Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                item  {
+                item {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -109,6 +109,29 @@ fun SettingsDialog(
                             fontWeight = FontWeight.Bold
                         )
                     }
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .toggleable(
+                            value = settings.highContrast,
+                            role = Role.Switch,
+                            onValueChange = {
+                                onAction(VLTAction.ToggleHighContrast(settings.highContrast))
+                            },
+                        ),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Switch(checked = settings.highContrast, null)
+                        Text(text = stringResource(id = R.string.high_contrast), modifier = Modifier.padding(horizontal = 8.dp))
+                    }
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                    ) {
+                        Text(text = stringResource(id = R.string.high_contrast_description))
+                    }
+                }
+                item { MyDivider() }
+                item {
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Column {
                             Text(text = stringResource(id = R.string.transcript_font_size))

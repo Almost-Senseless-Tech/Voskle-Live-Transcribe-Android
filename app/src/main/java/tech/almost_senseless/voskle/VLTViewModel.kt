@@ -7,7 +7,6 @@ package tech.almost_senseless.voskle
  import androidx.compose.runtime.setValue
  import androidx.compose.ui.text.TextRange
  import androidx.compose.ui.text.input.TextFieldValue
- import androidx.compose.ui.unit.TextUnit
  import androidx.lifecycle.ViewModel
  import androidx.lifecycle.ViewModelProvider
  import androidx.lifecycle.viewModelScope
@@ -61,6 +60,7 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
             is VLTAction.ProcessSpeakerInfo -> processSpeakerInfo(action.speakerFingerprint, action.speakerDataLength)
             is VLTAction.UpdateModelProcessingProgress -> updateModelProcessingProgress((action.progress))
             is VLTAction.UpdateSpeakerModelProcessingProgress -> updateSpeakerModelProcessingProgress(action.progress)
+            is VLTAction.ToggleHighContrast -> toggleHighContrast(action.highContrast)
         }
     }
 
@@ -273,6 +273,12 @@ class VLTViewModel(private val userPreferences: UserPreferencesRepository, @Supp
     private fun toggleGenerateSpeakerLabels(generateSpeakerLabels: Boolean) {
         viewModelScope.launch {
             userPreferences.updateGenerateSpeakerLabels(generateSpeakerLabels)
+        }
+    }
+
+    private fun toggleHighContrast(highContrast: Boolean) {
+        viewModelScope.launch {
+            userPreferences.updateHighContrast(highContrast)
         }
     }
 
