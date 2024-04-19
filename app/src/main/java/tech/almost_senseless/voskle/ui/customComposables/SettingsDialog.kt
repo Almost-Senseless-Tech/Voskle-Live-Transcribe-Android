@@ -116,7 +116,7 @@ fun SettingsDialog(
                             value = settings.highContrast,
                             role = Role.Switch,
                             onValueChange = {
-                                onAction(VLTAction.ToggleHighContrast(settings.highContrast))
+                                onAction(VLTAction.ToggleHighContrast(!settings.highContrast))
                             },
                         ),
                         verticalAlignment = Alignment.CenterVertically) {
@@ -273,7 +273,9 @@ fun SettingsDialog(
                 item {
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Button(onClick = {
-                            val intent = Intent(context, OSSLicensesActivity::class.java)
+                            val intent = Intent(context, OSSLicensesActivity::class.java).apply {
+                                putExtra("highContrast", settings.highContrast)
+                            }
                             context.startActivity(intent)
                         }) {
                             Text(text = stringResource(id = R.string.view_oss_licenses))

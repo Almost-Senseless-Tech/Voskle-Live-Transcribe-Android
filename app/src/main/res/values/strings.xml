@@ -55,7 +55,6 @@
     <string name="unknown_speaker">Unknown:</string>
     <string name="speaker">Person %1$s:</string>
     <string name="download_speaker_model">Download model for speaker recognition</string>
-    <string name="SMALL">Small</string>
     <string name="MEDIUM">Medium</string>
     <string name="LARGE">Large</string>
     <string name="VERY_LARGE">Very large</string>

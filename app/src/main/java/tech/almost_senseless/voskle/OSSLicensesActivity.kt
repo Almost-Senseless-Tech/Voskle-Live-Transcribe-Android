@@ -17,7 +17,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -25,29 +24,17 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
-import tech.almost_senseless.voskle.data.UserPreferences
-import tech.almost_senseless.voskle.data.UserPreferencesRepository
 import tech.almost_senseless.voskle.ui.theme.VoskleLiveTranscribeTheme
 
 class OSSLicensesActivity : ComponentActivity() {
-    private lateinit var viewModel: VLTViewModel
-
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            viewModel = viewModel(
-                factory = VLTViewModelFactory(
-                    UserPreferencesRepository(
-                        applicationContext.dataStore
-                    ), applicationContext
-                )
-            )
-            val settings = viewModel.settings.collectAsState(initial = UserPreferences())
-            VoskleLiveTranscribeTheme(darkTheme = isSystemInDarkTheme(), dynamicColor = true, highContrast = settings.value.highContrast) {
+            val highContrast = intent.extras!!.getBoolean("highContrast")
+            VoskleLiveTranscribeTheme(darkTheme = isSystemInDarkTheme(), dynamicColor = true, highContrast = highContrast) {
                 val context = LocalContext.current
                 Surface(
                     modifier = Modifier.fillMaxSize(),
