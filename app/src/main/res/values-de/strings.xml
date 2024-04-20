@@ -58,7 +58,7 @@
     <string name="MEDIUM">Mittel</string>
     <string name="LARGE">Groß</string>
     <string name="VERY_LARGE">Sehr groß</string>
-    <string name="LARGEST">Am größten</string>
+    <string name="LARGEST">Größte</string>
     <string name="get_help">Brauchen Sie Hilfe? Besuchen Sie %1$s</string>
     <string name="get_help_link">https://vlt.almost-senseless.tech/de/</string>
     <!-- Language names -->
